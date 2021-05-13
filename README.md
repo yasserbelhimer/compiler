@@ -1,5 +1,5 @@
 # Compiler
-## This is mini compiler using bison and flex
+## This is mini compiler using yacc and lex
 
 
 ### Setup

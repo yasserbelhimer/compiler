@@ -1,0 +1,6 @@
+compiler.exe
+lexical.exe
+syntax.tab.c
+syntax.tab.h
+lex.yy.c
+lex.yy.o

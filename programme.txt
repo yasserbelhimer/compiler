@@ -1,3 +1,7 @@
-CODE
+CODE Algo
+INTEGER Var1,Var2;
+CONST Const = 'A';
+CONST Const = "string";
+STRING String;
 START
 END

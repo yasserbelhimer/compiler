@@ -4,7 +4,7 @@
     #include<string.h>
     #include<math.h>
     #include "syntax.tab.h"
-    int nb_ligne=1;
+    int nb_ligne=0;
 %}
 lettre_maj [A-Z]
 lettre_min [a-z]
@@ -13,6 +13,8 @@ chiffre [0-9]
 IDF {lettre_maj}({lettre}|{chiffre}){0,19}
 CONST_INT ("-"|"+")?{chiffre}{1,6}
 CONST_REAL ("-"|"+")?{chiffre}+"."{chiffre}+
+CONST_CHAR "'"."'"
+CONST_STRING "\"".*"\""
 COMMENTAIRE "$"[^"$"]*"$"
 %%
 CODE {
@@ -118,11 +120,17 @@ NE {
 {CONST_REAL} {
     return CONST_REAL;
 }
+{CONST_CHAR} {
+    return CONST_CHAR;
+}
+{CONST_STRING} {
+    return CONST_STRING;
+}
 {COMMENTAIRE} 
 {IDF} {
     return  IDF;
 };
 [ \t]
 \n {nb_ligne++; }
-. printf("Erreur lexicale a la ligne %d \n", nb_ligne) ;
+. printf("Erreur lexicale a la ligne %d \n", nb_ligne);
 %%

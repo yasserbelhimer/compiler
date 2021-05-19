@@ -5,13 +5,14 @@
     #include<math.h>
     #include "syntax.tab.h"
     int nb_ligne=0;
+    extern void yyerror(const char* s);
 %}
 lettre_maj [A-Z]
 lettre_min [a-z]
 lettre [a-zA-Z]
 chiffre [0-9]
 IDF {lettre_maj}({lettre}|{chiffre}){0,19}
-CONST_INT ("-"|"+")?{chiffre}{1,6}
+CONST_INT ("-"|"+")?{chiffre}+
 CONST_REAL ("-"|"+")?{chiffre}+"."{chiffre}+
 CONST_CHAR "'"."'"
 CONST_STRING "\"".*"\""
@@ -115,9 +116,14 @@ NE {
     return PARENTHESE_FERMANTE;
 }
 {CONST_INT} {
+    if(yyleng>8)
+        yyerror("erreur lexecal");
     return CONST_INT;
 };
 {CONST_REAL} {
+    // printf("len = %d",yyleng);
+    if(yyleng>8)
+        yyerror("erreur lexecal");
     return CONST_REAL;
 }
 {CONST_CHAR} {
@@ -132,5 +138,5 @@ NE {
 };
 [ \t]
 \n {nb_ligne++; }
-. printf("Erreur lexicale a la ligne %d \n", nb_ligne);
+. yyerror("erreur lexecal");
 %%

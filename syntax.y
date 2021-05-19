@@ -106,5 +106,5 @@ int main() {
 int yyerror (char* msg){
 
 printf("%s : line %d \n",msg,nb_ligne);
-return 1;
+    exit(-1);
 }

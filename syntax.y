@@ -11,6 +11,7 @@ extern int yylex();
 extern int yyparse();
 extern FILE* yyin;
 extern int nb_ligne;
+extern int col;
 
 // values val;
 // int tabPile[1000];
@@ -25,10 +26,10 @@ extern int nb_ligne;
 int yyerror(char* msg);
 %}
 %union {
-int ival;
-float fval;
-char cval;
-char* sval;
+    int ival;
+    float fval;
+    char cval;
+    char* sval;
 }
 %token EGAL DEUX_POINTS POINT_VIRGULE VIRGULE POINT 
 %token EQ LT GT LE GE NE 
@@ -50,8 +51,8 @@ DECLARATION:LISTE_DECLARATION
 ;
 LISTE_DECLARATION:  TYPE LISTE_IDF POINT_VIRGULE
 |                   TYPE LISTE_IDF POINT_VIRGULE LISTE_DECLARATION
-|                   CONST IDF EGAL CONSTANTE POINT_VIRGULE
-|                   CONST IDF EGAL CONSTANTE POINT_VIRGULE LISTE_DECLARATION
+|                   CONST TYPE IDF EGAL CONSTANTE POINT_VIRGULE
+|                   CONST TYPE IDF EGAL CONSTANTE POINT_VIRGULE LISTE_DECLARATION
 ;
 TYPE: INTEGER | REAL | CHAR | STRING
 ;
@@ -102,9 +103,10 @@ int main() {
     fclose(yyin);
     return 0;
 }
+int yywrap(){
 
+}
 int yyerror (char* msg){
-
-printf("%s : line %d \n",msg,nb_ligne);
+    printf("%s : line %d column %d\n",msg,nb_ligne,col);
     exit(-1);
 }

@@ -1,11 +1,12 @@
 CODE Algo
 INTEGER Var1,Var2;
-CONST Const = 'A';
-CONST Const = "string";
+CONST CHAR Const1 = 'A';
+CONST STRING Const2 = "string";
 STRING String;
 START
-    Var1 := 1321231;
-    Var2 := 0.0;
+    Var1 := 15;
+    Var2 := 20;
+    Var3 := 0.0;
     $Var2 := 20 + 10 * 20;
     Var1 := 20.0 - Var1 ;$
-END
+END.

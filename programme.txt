@@ -7,6 +7,18 @@ START
     Var1 := 15;
     Var2 := 20;
     Var3 := 0.0;
+    Var4 := PROD(A+B,K+D,C/R);
+
     $Var2 := 20 + 10 * 20;
     Var1 := 20.0 - Var1 ;$
+
+    WHILE Var1 LT Var2 EXECUTE
+    {
+        Var1 := 1;
+        Var2 := 5;
+    };
+
+    WHEN J EQ I
+        DO Var1 := C + D;
+    OTHERWISE I := 5;
 END.

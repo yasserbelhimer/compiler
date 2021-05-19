@@ -7,6 +7,7 @@
     int nb_ligne=1;
     int col=1;
     extern void yyerror(const char* s);
+    int nbSausLigne(char ch[]);
 %}
 lettre_maj [A-Z]
 lettre_min [a-z]
@@ -71,7 +72,10 @@ OTHERWISE {
     col = col + strlen(yytext);
     return OTHERWISE;
 }
-
+PROD {
+    col = col + strlen(yytext);
+    return PROD;
+}
 = {
     col = col + strlen(yytext);
     return EGAL;
@@ -87,10 +91,6 @@ OTHERWISE {
 , {
     col = col + strlen(yytext);
     return VIRGULE;
-}
-"." {
-    col = col + strlen(yytext);
-    return POINT;
 }
 "+" {
     col = col + strlen(yytext);
@@ -154,7 +154,7 @@ NE {
         return CONST_INT;
     }
     else{
-        yyerror("Lexical error");
+        yyerror("Lexical error,the length of the INTEGER > 6");
     }
 };
 {CONST_REAL} {
@@ -163,7 +163,7 @@ NE {
         return CONST_REAL;
     }
     else{
-        yyerror("Lexical error");
+        yyerror("Lexical error,the length of the REAL > 8");
     }
 }
 {CONST_CHAR} {
@@ -174,17 +174,34 @@ NE {
     col = col + strlen(yytext);
     return CONST_STRING;
 }
-{COMMENTAIRE} 
+{COMMENTAIRE} {
+    col = col + strlen(yytext);
+    nb_ligne += nbSausLigne(yytext);
+}
 {IDF} {
     col = col + strlen(yytext);
     if(yyleng <= 20){
         return  IDF;
     }
     else{
-        yyerror("Lexical error");
+        yyerror("Lexical error,the length of the IDF > 20");
     }
 };
-[ \t] {col = col + strlen(yytext);}
-\n {nb_ligne++;col = 1;}
+[ \t] col = col + strlen(yytext);
+\n {
+    nb_ligne++;
+    col = 1;
+}
 . yyerror("Lexical error");
 %%
+int nbSausLigne(char ch[]){
+    int i,j,nb=0;
+    for (i = 0; i < strlen(ch); i++)
+    {
+        if (ch[i]=='\n')
+        {
+            nb++;
+        }
+    }
+    return nb;
+}

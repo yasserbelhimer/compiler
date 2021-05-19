@@ -6,7 +6,7 @@
     #include "syntax.tab.h"
     int nb_ligne=1;
     int col=1;
-    extern void yyerror(const char* s);
+    extern int PrintError(char* Type ,char* entite);
     int nbSausLigne(char ch[]);
 %}
 lettre_maj [A-Z]
@@ -154,7 +154,7 @@ NE {
         return CONST_INT;
     }
     else{
-        yyerror("Lexical error,the length of the INTEGER > 6");
+        PrintError("Lexical error,the length of the INTEGER > 6",yytext);
     }
 };
 {CONST_REAL} {
@@ -163,7 +163,7 @@ NE {
         return CONST_REAL;
     }
     else{
-        yyerror("Lexical error,the length of the REAL > 8");
+        PrintError("Lexical error,the length of the REAL > 8",yytext);
     }
 }
 {CONST_CHAR} {
@@ -184,7 +184,7 @@ NE {
         return  IDF;
     }
     else{
-        yyerror("Lexical error,the length of the IDF > 20");
+        PrintError("Lexical error,the length of the IDF > 20",yytext);
     }
 };
 [ \t] col = col + strlen(yytext);
@@ -192,7 +192,7 @@ NE {
     nb_ligne++;
     col = 1;
 }
-. yyerror("Lexical error");
+. PrintError("Lexical error",yytext);
 %%
 int nbSausLigne(char ch[]){
     int i,j,nb=0;

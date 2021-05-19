@@ -23,7 +23,7 @@ extern int col;
 // char idf [20];
 // int type,myIndex,mode;
 // int TabOrIdf = 0;
-int yyerror(char* msg);
+void yyerror(char* msg);
 %}
 %union {
     int ival;
@@ -97,10 +97,10 @@ EA:     EA PLUS EA
 ;
 NOMBRE: CONST_INT|CONST_REAL
 ;
-PRODUIT:    PROD PARENTHESE_OUVRANTE EA VIRGULE EA LISTE_EXPRESSION PARENTHESE_FERMANTE
+PRODUIT:    PROD PARENTHESE_OUVRANTE  LISTE_EXPRESSION PARENTHESE_FERMANTE
 ;
-LISTE_EXPRESSION: VIRGULE EA LISTE_EXPRESSION
-|
+LISTE_EXPRESSION:  EA VIRGULE LISTE_EXPRESSION
+|                 EA VIRGULE EA
 ;
 %%
 int main() {
@@ -118,7 +118,11 @@ int main() {
 int yywrap(){
 
 }
-int yyerror (char* msg){
-    printf("%s : line %d column %d\n",msg,nb_ligne,col);
-    exit(-1);
+void yyerror (char* msg){
+    printf("%s : line %d  column %d ",msg,nb_ligne,col);
+}
+int PrintError(char* Type ,char* entite){
+    yyerror(Type);
+    printf(" entite: %s \n",entite);
+    exit(-1);       
 }

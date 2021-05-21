@@ -7,7 +7,7 @@
     int nb_ligne=1;
     int col=1;
     extern int PrintError(char* Type ,char* entite);
-    int nbSausLigne(char ch[]);
+    extern void yyerror(const char* s);
 %}
 lettre_maj [A-Z]
 lettre_min [a-z]
@@ -92,6 +92,10 @@ PROD {
     col = col + strlen(yytext);
     return VIRGULE;
 }
+"." {
+    col = col + strlen(yytext);
+    return POINT;
+}
 "+" {
     col = col + strlen(yytext);
     return PLUS;
@@ -151,57 +155,53 @@ NE {
 {CONST_INT} {
     col = col + strlen(yytext);
     if(yyleng <= 6){
+        inserer(yytext,"CONST_INT");
         return CONST_INT;
     }
     else{
-        PrintError("Lexical error,the length of the INTEGER > 6",yytext);
+        PrintError("Lexical error",yytext);
     }
 };
 {CONST_REAL} {
     col = col + strlen(yytext);
     if(yyleng <= 8){
+        inserer(yytext,"CONST_REAL");
         return CONST_REAL;
     }
     else{
-        PrintError("Lexical error,the length of the REAL > 8",yytext);
+        PrintError("Lexical error",yytext);
     }
 }
 {CONST_CHAR} {
+    inserer(yytext,"CONST_CHAR");
     col = col + strlen(yytext);
     return CONST_CHAR;
 }
 {CONST_STRING} {
     col = col + strlen(yytext);
+    inserer(yytext,"CONST_STR");
     return CONST_STRING;
 }
 {COMMENTAIRE} {
-    col = col + strlen(yytext);
-    nb_ligne += nbSausLigne(yytext);
-}
+    int i=0;
+    while(i<yyleng) { 
+      if(yytext[i]=='\n'){
+          nb_ligne++;col=1;
+        }
+       i=i+1;
+    }
+} 
 {IDF} {
     col = col + strlen(yytext);
     if(yyleng <= 20){
+        inserer(yytext,"IDF");
         return  IDF;
     }
     else{
-        PrintError("Lexical error,the length of the IDF > 20",yytext);
+        PrintError("Lexical error",yytext);
     }
 };
-[ \t] col = col + strlen(yytext);
-\n {
-    nb_ligne++;
-    col = 1;
-}
+[ \t] {col = col + strlen(yytext);}
+\n {nb_ligne++;col = 1;}
 . PrintError("Lexical error",yytext);
 %%
-int nbSausLigne(char ch[]){
-    int i,j,nb=0;
-    for (i = 0; i < strlen(ch); i++)
-    {
-        if (ch[i]=='\n')
-        {
-            nb++;
-        }
-    }
-    return nb;
-}

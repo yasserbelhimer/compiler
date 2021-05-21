@@ -3,22 +3,10 @@ INTEGER Var1,Var2;
 CONST CHAR Const1 = 'A';
 CONST STRING Const2 = "string";
 STRING String;
-START 
-    Var1 := 105;
+START
+    Vjjjjar1 := 15;
     Var2 := 20;
-    Var3 := 0.0;
-    Var4 := PROD(A+B,K+D,C/R,20+ 33333333.0);
-
-    $Var2 := 222222 + 10 * 20;
-    Var1 := 20.0 - Var1 ;$
-
-    WHILE Var1 LT Var2 EXECUTE
-    {
-        Var1 := 1;
-        Var2 := 5;
-    };
-
-    WHEN J EQ I
-        DO Var1 := C + D;
-    OTHERWISE I := 5;
+    Var3 := PROD(20 + 10 * 20   ,   15*8*8,15+ 8/12*18);
+    Var2 := 20 + 10 * 20;
+    Var1 := 20.0 - Var1 ;
 END.

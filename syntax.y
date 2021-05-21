@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-// #include "TS.h"
+#include    "TS.h"
 // #include "TSS.h"
 // #include "pgm.h"
 
@@ -44,7 +44,7 @@ void yyerror(char* msg);
 %start axiom
 %nonassoc MOINSU
 %%
-axiom: CODE IDF DECLARATION START INSTRUCTIONS END {printf("execute avec succes\n");}
+axiom: CODE IDF DECLARATION START INSTRUCTIONS END {printf("execute avec succes\n");YYACCEPT;}
 ;
 DECLARATION:LISTE_DECLARATION
 |
@@ -70,22 +70,17 @@ LISTE_INSTRUCTION:  AFFECTATION
 |                   CONTROLE
 |                   CONTROLE LISTE_INSTRUCTION
 ;
+
 AFFECTATION:        IDF DEUX_POINTS EGAL EXPRESSION  POINT_VIRGULE
 ;
-BOUCLE: WHILE CONDITION EXECUTE ACCOLADE_OUVRANTE INSTRUCTIONS ACCOLADE_FERMANTE POINT_VIRGULE
+BOUCLE: WHILE EXECUTE ACCOLADE_OUVRANTE INSTRUCTIONS ACCOLADE_FERMANTE
 ;
-CONTROLE: WHEN CONDITION DO AFFECTATION OTHERWISE AFFECTATION 
-;
-CONDITION: OPERAND OPERATEUR_LOGIQUE OPERAND
-;
-OPERAND: IDF | CONSTANTE
-;
-OPERATEUR_LOGIQUE: EQ | LT | GT | LE | GE | NE
+CONTROLE: WHEN DO AFFECTATION OTHERWISE AFFECTATION 
 ;
 EXPRESSION: CONST_CHAR
 |           CONST_STRING
 |           EA
-|           PRODUIT
+|           PRO
 ;
 EA:     EA PLUS EA 
 |       EA MOINS EA 
@@ -95,12 +90,12 @@ EA:     EA PLUS EA
 |       IDF
 |       NOMBRE
 ;
-NOMBRE: CONST_INT|CONST_REAL
+NOMBRE:CONST_INT|CONST_REAL
 ;
-PRODUIT:    PROD PARENTHESE_OUVRANTE  LISTE_EXPRESSION PARENTHESE_FERMANTE
-;
-LISTE_EXPRESSION:  EA VIRGULE LISTE_EXPRESSION
-|                 EA VIRGULE EA
+PRO:   PROD PARENTHESE_OUVRANTE LISTE_EXP PARENTHESE_FERMANTE
+;      
+LISTE_EXP:  EA  VIRGULE  LISTE_EXP
+|           EA VIRGULE EA 
 ;
 %%
 int main() {
@@ -110,17 +105,20 @@ int main() {
         printf("ERROR \n");
     else 
         yyparse();
-    // afficher();
-    // afficher_qdr();
+    afficher();
     fclose(yyin);
     return 0;
 }
+
 int yywrap(){
 
 }
+
+
 void yyerror (char* msg){
     printf("%s : line %d  column %d ",msg,nb_ligne,col);
 }
+
 int PrintError(char* Type ,char* entite){
     yyerror(Type);
     printf(" entite: %s \n",entite);

@@ -6,6 +6,7 @@
     #include "syntax.tab.h"
     int nb_ligne=1;
     int col=1;
+    extern void inserer(char a[],char b[]);
     extern int PrintError(char* Type ,char* entite);
     extern void yyerror(const char* s);
 %}

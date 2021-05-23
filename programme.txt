@@ -9,4 +9,9 @@ START
     Var3 := PROD(20 + 10 * 20   ,   15*8*8,15+ 8/12*18);
     Var2 := 20 + 10 * 20;
     Var1 := 20.0 - Var1 ;
+
+    WHILE (Var1 + Var2) LT "A" EXECUTE
+    {
+        Var1 := 1;
+    };
 END.

@@ -80,8 +80,6 @@ CONDITION: OPERAND OPERATEUR_LOGIQUE OPERAND
 ;
 OPERAND: EA | CONST_STRING | CONST_CHAR
 ;
-OPERAND:
-;
 OPERATEUR_LOGIQUE: EQ | LT | GT | LE | GE | NE
 ;
 EXPRESSION: CONST_CHAR
@@ -112,7 +110,9 @@ int main() {
         printf("ERROR \n");
     else 
         yyparse();
-    afficher();
+    afficherTs_IDF();
+    afficherTs_MC_Sep(2);
+    afficherTs_MC_Sep(3);
     fclose(yyin);
     return 0;
 }

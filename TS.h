@@ -1,9 +1,11 @@
 typedef struct
 {
-char Entite[20];
-char TypeLex[20];
-char TypeSym[20];
-char TypeVar[20];
+    char Entite[20];
+    char TypeLex[20];
+    float Val;
+    char TypeVar[20];
+    int ligne;
+    int col;
 }TypeTS;
 
 
@@ -13,14 +15,32 @@ typedef struct cellule
    struct cellule *svt;
 }elmlist;
 
+
+
 typedef elmlist *list;
 
-list ts=NULL;
+list ts_idf=NULL;
+list ts_mc=NULL;
+list ts_sep=NULL;
 
-list recherche(char entite[])
+list recherche(char entite[],int cas)
 {
 int i=0;
-list p=ts;
+list p;
+
+switch (cas)
+{
+ case 1 :
+    p=ts_idf;
+    break;
+ case 2 :
+    p=ts_mc;
+    break;
+ case 3 :
+    p=ts_sep;
+    break;
+}
+
 while(p!=NULL)
 {	
   if (strcmp(entite,p->info.Entite)==0) return p;
@@ -31,46 +51,107 @@ return NULL;
 }
 
 
-void inserer(char a[],char b[]){
-
-    if(recherche(a)==NULL){
+void inserer(char a[],char b[],char c[],int li,int cl,float val,int cas){
+    
+    if(recherche(a,cas)==NULL){
 	
         list p=(elmlist*)malloc(sizeof(elmlist));
-
+        list temp=NULL; 
         strcpy(p->info.Entite,a);
         strcpy(p->info.TypeLex,b);
-        strcpy(p->info.TypeSym,"");
-        strcpy(p->info.TypeVar,"");
+        strcpy(p->info.TypeVar,c);
+        p->info.Val=val;
+        p->info.ligne=li;
+        p->info.col=cl;
         p->svt=NULL;
 
-        if(ts==NULL){
+        switch (cas)
+        {
+        case 1:
+            temp=ts_idf;
+            break;
+        case 2:
+            temp=ts_mc;
+            break;
+        case 3:
+            temp=ts_sep;
+            break;    
+        } 
 
-            ts=p;
+        if(temp==NULL){
+
+            temp=p;
         }else{
-            list q=ts;
+            list q=temp;
             while(q->svt!=NULL){
             q=q->svt;
             }
             q->svt=p;
                 
         }
+
+        switch (cas)
+        {
+        case 1:
+            ts_idf=temp;
+            break;
+        case 2:
+            ts_mc=temp;
+            break;
+        case 3:
+            ts_sep=temp;
+            break;    
+        }
+
+
+
     }
 }
 
 
 
-void afficher ()
+void afficherTs_IDF()
 {
-    printf("\n     /*************************** Table des symboles ************************/\n\n");
-    printf("      -----------------------------------------------------------------------\n");
-    printf("     |      Entite     |     TypeLex     |     TypeVar     |  TypeSimentique |\n");
+    printf("\n     /*********************************   Table des symboles des Idfs/Consts   ******************************/\n\n");
+    printf("      --------------------------------------------------------------------------------------------------------\n");
+    printf("     |         Entite         |     TypeLex     |       Val       |     TypeVar     |   Ligne    |    Col     |\n");
 
-    list p=ts;
+    list p=ts_idf;
+    char *ch=(char*)malloc(100*sizeof(char)); 
     while(p!=NULL)
     {
-        printf("     |-----------------|-----------------|-----------------|-----------------|\n");
-        printf("     | %15s | %15s | %15s | %15s |\n",p->info.Entite,p->info.TypeLex,p->info.TypeVar,p->info.TypeSym);
+        strcpy(ch,"");
+        if(strcmp(p->info.TypeVar,"Entier")==0) sprintf(ch,"%d",(int)p->info.Val);
+        if(strcmp(p->info.TypeVar,"Reel")==0) sprintf(ch,"%.4f",p->info.Val);
+
+        printf("     |------------------------|-----------------|-----------------|-----------------|------------|------------|\n");
+        printf("     | %22s | %15s | %15s | %15s | %10d | %10d |\n",p->info.Entite,p->info.TypeLex,ch,p->info.TypeVar,p->info.ligne,p->info.col);
         p=p->svt;
     }
-    printf("      -----------------------------------------------------------------------\n\n");
+    printf("      --------------------------------------------------------------------------------------------------------\n\n");
+}
+
+void afficherTs_MC_Sep(int cas)
+{
+    list p;
+    if(cas==2){
+      p=ts_mc;
+      printf("\n     /********* Table des symboles des Mots cles *********/\n\n");
+    }
+    if(cas==3){
+      p=ts_sep;
+      printf("\n     /********* Table des symboles des separateurs *******/\n\n");
+    }
+    
+    printf("      ---------------------------------------------------\n");
+    printf("     |   Entite   |   TypeLex  |   Ligne    |    Col     |\n");
+
+    
+    while(p!=NULL)
+    {
+        printf("     |------------|------------|------------|------------|\n");
+        printf("     | %10s | %10s | %10d | %10d |\n",p->info.Entite,p->info.TypeLex,p->info.ligne,p->info.col);
+        p=p->svt;
+    }
+    printf("      ---------------------------------------------------\n\n");
 }

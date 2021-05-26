@@ -6,7 +6,7 @@
     #include "syntax.tab.h"
     int nb_ligne=1;
     int col=1;
-    extern void inserer(char a[],char b[]);
+    extern void inserer(char a[],char b[],char c[],int li,int cl,float val,int cas);
     extern int PrintError(char* Type ,char* entite);
     extern void yyerror(const char* s);
 %}
@@ -22,141 +22,174 @@ CONST_STRING "\"".*"\""
 COMMENTAIRE "$"[^"$"]*"$"
 %%
 CODE {
+    inserer(yytext,"MotCle","",nb_ligne,col,0,2); 
     col = col + strlen(yytext);
     return CODE;
 }
 START {
+    inserer(yytext,"MotCle","",nb_ligne,col,0,2);
     col = col + strlen(yytext);
     return START;
 }
 "END." {
+    inserer(yytext,"MotCle","",nb_ligne,col,0,2);
     col = col + strlen(yytext);
     return END;
 }
 INTEGER {
+    inserer(yytext,"MotCle","",nb_ligne,col,0,2);
     col = col + strlen(yytext);
     return INTEGER;
 }
 REAL {
+    inserer(yytext,"MotCle","",nb_ligne,col,0,2);
     col = col + strlen(yytext);
     return REAL;
 }
 CHAR {
+    inserer(yytext,"MotCle","",nb_ligne,col,0,2);
     col = col + strlen(yytext);
     return CHAR;
 }
 STRING {
+    inserer(yytext,"MotCle","",nb_ligne,col,0,2);
     col = col + strlen(yytext);
     return STRING;
 }
 CONST {
+    inserer(yytext,"MotCle","",nb_ligne,col,0,2);
     col = col + strlen(yytext);
     return CONST;
 }
 WHILE {
+    inserer(yytext,"MotCle","",nb_ligne,col,0,2);
     col = col + strlen(yytext);
     return WHILE;
 }
 EXECUTE {
+    inserer(yytext,"MotCle","",nb_ligne,col,0,2);
     col = col + strlen(yytext);
     return EXECUTE;
 }
 WHEN {
+    inserer(yytext,"MotCle","",nb_ligne,col,0,2);
     col = col + strlen(yytext);
     return WHEN;
 }
 DO {
+    inserer(yytext,"MotCle","",nb_ligne,col,0,2);
     col = col + strlen(yytext);
     return DO;
 }
 OTHERWISE {
+    inserer(yytext,"MotCle","",nb_ligne,col,0,2);
     col = col + strlen(yytext);
     return OTHERWISE;
 }
 PROD {
+    inserer(yytext,"MotCle","",nb_ligne,col,0,2);
     col = col + strlen(yytext);
     return PROD;
 }
 = {
+    inserer(yytext,"Sep","",nb_ligne,col,0,3);
     col = col + strlen(yytext);
     return EGAL;
 }
 : {
+    inserer(yytext,"Sep","",nb_ligne,col,0,3);
     col = col + strlen(yytext);
     return DEUX_POINTS;
 }
 ; {
+    inserer(yytext,"Sep","",nb_ligne,col,0,3);
     col = col + strlen(yytext);
     return POINT_VIRGULE;
 }
 , {
+    inserer(yytext,"Sep","",nb_ligne,col,0,3);
     col = col + strlen(yytext);
     return VIRGULE;
 }
 "." {
+    inserer(yytext,"Sep","",nb_ligne,col,0,3);
     col = col + strlen(yytext);
     return POINT;
 }
 "+" {
+    inserer(yytext,"Sep","",nb_ligne,col,0,3);
     col = col + strlen(yytext);
     return PLUS;
 }
 "-" {
+    inserer(yytext,"Sep","",nb_ligne,col,0,3);
     col = col + strlen(yytext);
     return MOINS;
 }
 "*" {
+    inserer(yytext,"Sep","",nb_ligne,col,0,3);
     col = col + strlen(yytext);
     return MULT;
 }
 "/" {
+    inserer(yytext,"Sep","",nb_ligne,col,0,3);
     col = col + strlen(yytext);
     return DIV;
 }
 EQ {
+    inserer(yytext,"Sep","",nb_ligne,col,0,3);
     col = col + strlen(yytext);
     return EQ;
 }
 LT {
+    inserer(yytext,"Sep","",nb_ligne,col,0,3);
     col = col + strlen(yytext);
     return LT;
 }
 GT {
+    inserer(yytext,"Sep","",nb_ligne,col,0,3);
     col = col + strlen(yytext);
     return GT;
 }
 LE {
+    inserer(yytext,"Sep","",nb_ligne,col,0,3);
     col = col + strlen(yytext);
     return LE;
 }
 GE {
+    inserer(yytext,"Sep","",nb_ligne,col,0,3);
     col = col + strlen(yytext);
     return GE;
 }
 NE {
+    inserer(yytext,"Sep","",nb_ligne,col,0,3);
     col = col + strlen(yytext);
     return NE;
 }
 "{" {
+    inserer(yytext,"Sep","",nb_ligne,col,0,3);
     col = col + strlen(yytext);
     return ACCOLADE_OUVRANTE;
 }
 "}" {
+    inserer(yytext,"Sep","",nb_ligne,col,0,3);
     col = col + strlen(yytext);
     return ACCOLADE_FERMANTE;
 }
 "(" {
+    inserer(yytext,"Sep","",nb_ligne,col,0,3);
     col = col + strlen(yytext);
     return PARENTHESE_OUVRANTE;
 }
 ")" {
+    inserer(yytext,"Sep","",nb_ligne,col,0,3);
     col = col + strlen(yytext);
     return PARENTHESE_FERMANTE;
 }
 {CONST_INT} {
     col = col + strlen(yytext);
     if(yyleng <= 6){
-        inserer(yytext,"CONST_INT");
+        inserer(yytext,"CONST_INT","Entier",nb_ligne,col-yyleng,atof(yytext),1);
         return CONST_INT;
     }
     else{
@@ -166,7 +199,7 @@ NE {
 {CONST_REAL} {
     col = col + strlen(yytext);
     if(yyleng <= 8){
-        inserer(yytext,"CONST_REAL");
+        inserer(yytext,"CONST_REAL","Reel",nb_ligne,col-yyleng,atof(yytext),1);
         return CONST_REAL;
     }
     else{
@@ -174,13 +207,13 @@ NE {
     }
 }
 {CONST_CHAR} {
-    inserer(yytext,"CONST_CHAR");
+    inserer(yytext,"CONST_CHAR","",nb_ligne,col,0,1);
     col = col + strlen(yytext);
     return CONST_CHAR;
 }
 {CONST_STRING} {
     col = col + strlen(yytext);
-    inserer(yytext,"CONST_STR");
+    inserer(yytext,"CONST_STR","",nb_ligne,col-yyleng,0,1);
     return CONST_STRING;
 }
 {COMMENTAIRE} {
@@ -195,7 +228,7 @@ NE {
 {IDF} {
     col = col + strlen(yytext);
     if(yyleng <= 20){
-        inserer(yytext,"IDF");
+        inserer(yytext,"IDF","",nb_ligne,col-yyleng,0,1);
         return  IDF;
     }
     else{

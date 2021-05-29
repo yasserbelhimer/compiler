@@ -1,157 +1,155 @@
-typedef struct
+/**
+ * Initialisation des des outils necessaire pour la compilation
+ * @return void
+ */
+void initialisation()
 {
-    char Entite[20];
-    char TypeLex[20];
-    float Val;
-    char TypeVar[20];
-    int ligne;
-    int col;
-}TypeTS;
-
-
-typedef struct cellule
+    time_t seconds;
+    seconds = time(NULL);
+    mkdir("logs");
+    sprintf(logFileName, "logs/logs-%d.log", seconds);
+    FILE *fichier = NULL;
+    fichier = fopen(logFileName, "w");
+    if (fichier != NULL)
+    {
+        fprintf(fichier, "\n/******************************   logs de l'instance %d   ******************************/\n\n", seconds);
+    }
+    else
+        printf("Impossible d'ouvrir le fichier %s\n", logFileName);
+}
+/**
+ * Recherche une entite dans la table des symboles des idfs
+ * @param char NomEntite[] nom de l'entité
+ * @param char code[] code de l'entité
+ * @return Element retourne l'element de la liste s'il existe sinon retourne NULL
+ */
+Element* rechercherIdf(char NomEntite[])
 {
-    TypeTS info;
-   struct cellule *svt;
-}elmlist;
-
-
-
-typedef elmlist *list;
-
-list ts_idf=NULL;
-list ts_mc=NULL;
-list ts_sep=NULL;
-
-list recherche(char entite[],int cas)
-{
-int i=0;
-list p;
-
-switch (cas)
-{
- case 1 :
-    p=ts_idf;
-    break;
- case 2 :
-    p=ts_mc;
-    break;
- case 3 :
-    p=ts_sep;
-    break;
+    Element* p = listIdf;
+    while (p != NULL)
+    {
+        if (strcmp(NomEntite, p->NomEntite) == 0)
+            return p;
+        p = p->svt;
+    }
+    return NULL;
 }
 
-while(p!=NULL)
-{	
-  if (strcmp(entite,p->info.Entite)==0) return p;
-  p=p->svt;
-}
-
-return NULL;
-}
-
-
-void inserer(char a[],char b[],char c[],int li,int cl,float val,int cas){
-    
-    if(recherche(a,cas)==NULL){
-	
-        list p=(elmlist*)malloc(sizeof(elmlist));
-        list temp=NULL; 
-        strcpy(p->info.Entite,a);
-        strcpy(p->info.TypeLex,b);
-        strcpy(p->info.TypeVar,c);
-        p->info.Val=val;
-        p->info.ligne=li;
-        p->info.col=cl;
-        p->svt=NULL;
-
-        switch (cas)
+/**
+ * Inserer un idf a la fin de la table des symboles de idf s'il n'est pas encore inseré.
+ * @param char NomEntite[] nom de l'entité
+ * @param char CodeEntite[] code de l'entité
+ * @param int ligne la ligne ou se trouve l'entité
+ * @param int col la collone ou se trouve l'entité
+ * @return void
+ */
+void insererIdfLex(char NomEntite[], char CodeEntite[], int ligne, int col)
+{
+    FILE *fichier = NULL;
+    fichier = fopen(logFileName, "a");
+    if (fichier != NULL)
+    {
+        fprintf(fichier, "Insertion de l'idf %s dans la table des symboles: ligne %d collone %d-----------------\n", NomEntite, ligne, col);
+        if (rechercherIdf(NomEntite) == NULL)
         {
-        case 1:
-            temp=ts_idf;
-            break;
-        case 2:
-            temp=ts_mc;
-            break;
-        case 3:
-            temp=ts_sep;
-            break;    
-        } 
-
-        if(temp==NULL){
-
-            temp=p;
-        }else{
-            list q=temp;
-            while(q->svt!=NULL){
-            q=q->svt;
+            Element* p = malloc(sizeof(Element));
+            strcpy(p->NomEntite, NomEntite);
+            strcpy(p->CodeEntite, CodeEntite);
+            strcpy(p->TypeEntite, "");
+            strcpy(p->TypeDeclaration, "UNDEFINED");
+            p->svt = NULL;
+            if (listIdf == NULL)
+            {
+                listIdf = p;
             }
-            q->svt=p;
-                
+            else
+            {
+                Element* temp = listIdf;
+                while (temp->svt != NULL)
+                    temp = temp->svt;
+                temp->svt = p;
+            }
+            fprintf(fichier, "Insertion de l'idf %s dans la table des symboles: ligne %d collone %d----------------- Ok\n\n", NomEntite, ligne, col);
         }
-
-        switch (cas)
+        else
         {
-        case 1:
-            ts_idf=temp;
-            break;
-        case 2:
-            ts_mc=temp;
-            break;
-        case 3:
-            ts_sep=temp;
-            break;    
+            fprintf(fichier, "%s existe deja dans la table des symboles!\n");
+            fprintf(fichier, "Insertion de l'idf %s dans la table des symboles: ligne %d collone %d----------------- Failed\n\n", NomEntite, ligne, col);
         }
-
-
-
     }
+    else
+        printf("Impossible d'ouvrir le fichier %s\n", logFileName);
 }
 
-
-
-void afficherTs_IDF()
+/**
+ * Afficher la table des symboles de idfs.
+ * @return void
+ */
+void afficherIdf()
 {
-    printf("\n     /*********************************   Table des symboles des Idfs/Consts   ******************************/\n\n");
-    printf("      --------------------------------------------------------------------------------------------------------\n");
-    printf("     |         Entite         |     TypeLex     |       Val       |     TypeVar     |   Ligne    |    Col     |\n");
-
-    list p=ts_idf;
-    char *ch=(char*)malloc(100*sizeof(char)); 
-    while(p!=NULL)
+    FILE *fichier = NULL;
+    fichier = fopen("ts.log", "w");
+    if (fichier != NULL)
     {
-        strcpy(ch,"");
-        if(strcmp(p->info.TypeVar,"Entier")==0) sprintf(ch,"%d",(int)p->info.Val);
-        if(strcmp(p->info.TypeVar,"Reel")==0) sprintf(ch,"%.4f",p->info.Val);
-
-        printf("     |------------------------|-----------------|-----------------|-----------------|------------|------------|\n");
-        printf("     | %22s | %15s | %15s | %15s | %10d | %10d |\n",p->info.Entite,p->info.TypeLex,ch,p->info.TypeVar,p->info.ligne,p->info.col);
-        p=p->svt;
+        fprintf(fichier, "\n/*********************************   Table des symboles des Idfs/Consts   ******************************/\n\n");
+        fprintf(fichier, "--------------------------------------------------------------------------------------------------------\n");
+        fprintf(fichier, "|            NomEntite            |     CodeEntite     |     CodeEntite     |       TypeDeclaration       |\n");
+        Element* p = listIdf;
+        while (p != NULL)
+        {
+            fprintf(fichier, "|---------------------------------|--------------------|--------------------|-----------------------|\n");
+            fprintf(fichier, "| %25s       | %13s      | %13s      | %15s       |\n", p->NomEntite, p->CodeEntite,p->TypeEntite, p->TypeDeclaration);
+            p = p->svt;
+        }
+        fprintf(fichier, "--------------------------------------------------------------------------------------------------------\n\n");
     }
-    printf("      --------------------------------------------------------------------------------------------------------\n\n");
+    else
+        printf("Impossible d'ouvrir le fichier ts.log\n");
+
+    fclose(fichier);
 }
+// void afficherTs_IDF()
+// {
+//     printf("\n     /*********************************   Table des symboles des Idfs/Consts   ******************************/\n\n");
+//     printf("      --------------------------------------------------------------------------------------------------------\n");
+//     printf("     |         Entite         |     TypeLex     |       Val       |     TypeVar     |   Ligne    |    Col     |\n");
 
-void afficherTs_MC_Sep(int cas)
-{
-    list p;
-    if(cas==2){
-      p=ts_mc;
-      printf("\n     /********* Table des symboles des Mots cles *********/\n\n");
-    }
-    if(cas==3){
-      p=ts_sep;
-      printf("\n     /********* Table des symboles des separateurs *******/\n\n");
-    }
-    
-    printf("      ---------------------------------------------------\n");
-    printf("     |   Entite   |   TypeLex  |   Ligne    |    Col     |\n");
+//     list p=ts_idf;
+//     char *ch=(char*)malloc(100*sizeof(char));
+//     while(p!=NULL)
+//     {
+//         strcpy(ch,"");
+//         if(strcmp(p->info.TypeVar,"Entier")==0) sprintf(ch,"%d",(int)p->info.Val);
+//         if(strcmp(p->info.TypeVar,"Reel")==0) sprintf(ch,"%.4f",p->info.Val);
 
-    
-    while(p!=NULL)
-    {
-        printf("     |------------|------------|------------|------------|\n");
-        printf("     | %10s | %10s | %10d | %10d |\n",p->info.Entite,p->info.TypeLex,p->info.ligne,p->info.col);
-        p=p->svt;
-    }
-    printf("      ---------------------------------------------------\n\n");
-}
+//         printf("     |------------------------|-----------------|-----------------|-----------------|------------|------------|\n");
+//         printf("     | %22s | %15s | %15s | %15s | %10d | %10d |\n",p->info.Entite,p->info.TypeLex,ch,p->info.TypeVar,p->info.ligne,p->info.col);
+//         p=p->svt;
+//     }
+//     printf("      --------------------------------------------------------------------------------------------------------\n\n");
+// }
+
+// void afficherTs_MC_Sep(int cas)
+// {
+//     list p;
+//     if(cas==2){
+//       p=ts_mc;
+//       printf("\n     /********* Table des symboles des Mots cles *********/\n\n");
+//     }
+//     if(cas==3){
+//       p=ts_sep;
+//       printf("\n     /********* Table des symboles des separateurs *******/\n\n");
+//     }
+
+//     printf("      ---------------------------------------------------\n");
+//     printf("     |   Entite   |   TypeLex  |   Ligne    |    Col     |\n");
+
+//     while(p!=NULL)
+//     {
+//         printf("     |------------|------------|------------|------------|\n");
+//         printf("     | %10s | %10s | %10d | %10d |\n",p->info.Entite,p->info.TypeLex,p->info.ligne,p->info.col);
+//         p=p->svt;
+//     }
+//     printf("      ---------------------------------------------------\n\n");
+// }
+

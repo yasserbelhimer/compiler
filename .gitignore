@@ -4,3 +4,5 @@ syntax.tab.c
 syntax.tab.h
 lex.yy.c
 lex.yy.o
+logs/
+*.log

@@ -3,7 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+  #include<math.h>
 #include    "TS.h"
+#include  "routine_sem.h"
 // #include "TSS.h"
 // #include "pgm.h"
 
@@ -23,6 +25,8 @@ extern int col;
 // char idf [20];
 // int type,myIndex,mode;
 // int TabOrIdf = 0;
+char sauveType[10];
+char sauveChar[10];
 void yyerror(char* msg);
 %}
 %union {
@@ -34,11 +38,11 @@ void yyerror(char* msg);
 %token EGAL DEUX_POINTS POINT_VIRGULE VIRGULE POINT 
 %token EQ LT GT LE GE NE 
 %token ACCOLADE_OUVRANTE ACCOLADE_FERMANTE PARENTHESE_OUVRANTE PARENTHESE_FERMANTE
-%token CODE START END INTEGER REAL CHAR STRING CONST WHILE EXECUTE WHEN DO OTHERWISE PROD
+%token CODE START <sval>IDF END <sval>INTEGER <sval>REAL <sval>CHAR <sval>STRING CONST WHILE EXECUTE WHEN DO OTHERWISE PROD
 %token <ival>CONST_INT
 %token <fval>CONST_REAL 
-%token <cval>CONST_STRING 
-%token <sval>CONST_CHAR IDF
+%token <sval>CONST_STRING 
+%token <cval>CONST_CHAR 
 %left PLUS MOINS
 %left MULT DIV
 %start axiom
@@ -49,16 +53,23 @@ axiom: CODE IDF DECLARATION START INSTRUCTIONS END {printf("execute avec succes\
 DECLARATION:LISTE_DECLARATION
 |
 ;
-LISTE_DECLARATION:  TYPE LISTE_IDF POINT_VIRGULE
+LISTE_DECLARATION:  TYPE LISTE_IDF POINT_VIRGULE 
 |                   TYPE LISTE_IDF POINT_VIRGULE LISTE_DECLARATION
-|                   CONST TYPE IDF EGAL CONSTANTE POINT_VIRGULE
-|                   CONST TYPE IDF EGAL CONSTANTE POINT_VIRGULE LISTE_DECLARATION
+|                   CONST TYPE IDF  EGAL CONSTANTE POINT_VIRGULE {DoubleDeclaration($3,nb_ligne,col);ModifierTS($3,2,sauveType,"");ModifierTS($3,1,sauveChar,sauveType);CompatibiliteType($3,sauveChar,nb_ligne,col);}
+|                   CONST TYPE IDF  EGAL CONSTANTE POINT_VIRGULE {DoubleDeclaration($3,nb_ligne,col);ModifierTS($3,2,sauveType,"");ModifierTS($3,1,sauveChar,sauveType);CompatibiliteType($3,sauveChar,nb_ligne,col);} LISTE_DECLARATION 
 ;
-TYPE: INTEGER | REAL | CHAR | STRING
+TYPE: INTEGER {strcpy(sauveType,$1);}
+| REAL {strcpy(sauveType,$1);}
+| CHAR {strcpy(sauveType,$1);}
+| STRING {strcpy(sauveType,$1);}
 ;
-CONSTANTE: CONST_INT | CONST_REAL | CONST_STRING | CONST_CHAR
+CONSTANTE: CONST_INT {itoa($1,sauveChar,10);} 
+| CONST_REAL  {gcvt($1,6,sauveChar);}
+| CONST_STRING {strcpy(sauveChar,$1);}
+| CONST_CHAR  {sauveChar[0]='\'';sauveChar[1]=$1;sauveChar[2]='\'';sauveChar[3]='\0';}
 ;
-LISTE_IDF: IDF | IDF VIRGULE LISTE_IDF
+LISTE_IDF: IDF {DoubleDeclaration($1,nb_ligne,col);ModifierTS($1,2,sauveType,"");}
+| IDF {DoubleDeclaration($1,nb_ligne,col);ModifierTS($1,2,sauveType,"");} VIRGULE LISTE_IDF 
 ;
 INSTRUCTIONS:       LISTE_INSTRUCTION
 |
@@ -70,7 +81,7 @@ LISTE_INSTRUCTION:  AFFECTATION
 |                   CONTROLE
 |                   CONTROLE LISTE_INSTRUCTION
 ;
-AFFECTATION:        IDF DEUX_POINTS EGAL EXPRESSION  POINT_VIRGULE
+AFFECTATION:        IDF {IdfNonDeclarer($1,nb_ligne,col);} DEUX_POINTS EGAL EXPRESSION  POINT_VIRGULE
 ;
 BOUCLE: WHILE CONDITION EXECUTE ACCOLADE_OUVRANTE INSTRUCTIONS ACCOLADE_FERMANTE POINT_VIRGULE
 ;
@@ -92,7 +103,7 @@ EA:     EA PLUS EA
 |       EA MULT EA
 |       EA DIV EA
 |       PARENTHESE_OUVRANTE EA PARENTHESE_FERMANTE
-|       IDF
+|       IDF {IdfNonDeclarer($1,nb_ligne,col);}
 |       NOMBRE
 ;
 NOMBRE:CONST_INT|CONST_REAL
@@ -111,8 +122,8 @@ int main() {
     else 
         yyparse();
     afficherTs_IDF();
-    afficherTs_MC_Sep(2);
-    afficherTs_MC_Sep(3);
+    //afficherTs_MC_Sep(2);
+    //afficherTs_MC_Sep(3);
     fclose(yyin);
     return 0;
 }

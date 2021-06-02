@@ -1,15 +1,15 @@
 CODE Algo
-INTEGER Var1,Var2;
+INTEGER Var1,Var2,Var3;
 CONST CHAR Const1 = 'A';
 CONST STRING Const2 = "string";
+CONST INTEGER Const5 =0.212121;
 STRING String;
 START
-    Vjjjjar1 := 15;
-    Var2 := 20;
-    Var3 := PROD(20 + 10 * 20   ,   15*8*8,15+ 8/12*18);
-    Var2 := 20 + 10 * 20;
-    Var1 := 20.0 - Var1 ;
 
+    Var2 := 20;
+    Var3 := PROD(20 + 10 * 20   ,   15*8,15+ 8/12*18);
+    Var2 := 20 + 10 * 20;
+    Var1 := 20.0 - Var1;
     WHILE (Var1 + Var2) LT "A" EXECUTE
     {
         Var1 := 1;

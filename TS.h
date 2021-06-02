@@ -121,8 +121,8 @@ void afficherTs_IDF()
     while(p!=NULL)
     {
         strcpy(ch,"");
-        if(strcmp(p->info.TypeVar,"Entier")==0) sprintf(ch,"%d",(int)p->info.Val);
-        if(strcmp(p->info.TypeVar,"Reel")==0) sprintf(ch,"%.4f",p->info.Val);
+        if(strcmp(p->info.TypeVar,"INTEGER")==0) sprintf(ch,"%d",(int)p->info.Val);
+        if(strcmp(p->info.TypeVar,"REAL")==0) sprintf(ch,"%.4f",p->info.Val);
 
         printf("     |------------------------|-----------------|-----------------|-----------------|------------|------------|\n");
         printf("     | %22s | %15s | %15s | %15s | %10d | %10d |\n",p->info.Entite,p->info.TypeLex,ch,p->info.TypeVar,p->info.ligne,p->info.col);
@@ -154,4 +154,30 @@ void afficherTs_MC_Sep(int cas)
         p=p->svt;
     }
     printf("      ---------------------------------------------------\n\n");
+}
+
+void ModifierTS(char Entite[], int cas,char b[],char type[]){
+    list p=recherche(Entite,1);
+    if(p!=NULL)
+    {
+        
+       switch (cas)
+       {
+            case 1:{
+                
+                if(strcmp(type,"INTEGER")==0){
+                    p->info.Val=atof(b);   
+                }
+                if(strcmp(type,"REAL")==0){
+                 p->info.Val=atof(b);   
+                }
+                break;
+
+            }
+        
+            default:
+            strcpy(p->info.TypeVar,b);  
+            break;
+       }
+    }
 }

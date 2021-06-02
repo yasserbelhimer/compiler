@@ -39,21 +39,25 @@ START {
 INTEGER {
     inserer(yytext,"MotCle","",nb_ligne,col,0,2);
     col = col + strlen(yytext);
+    yylval.sval=strdup(yytext);
     return INTEGER;
 }
 REAL {
     inserer(yytext,"MotCle","",nb_ligne,col,0,2);
     col = col + strlen(yytext);
+    yylval.sval=strdup(yytext);
     return REAL;
 }
 CHAR {
     inserer(yytext,"MotCle","",nb_ligne,col,0,2);
     col = col + strlen(yytext);
+    yylval.sval=strdup(yytext);
     return CHAR;
 }
 STRING {
     inserer(yytext,"MotCle","",nb_ligne,col,0,2);
     col = col + strlen(yytext);
+    yylval.sval=strdup(yytext);
     return STRING;
 }
 CONST {
@@ -189,7 +193,8 @@ NE {
 {CONST_INT} {
     col = col + strlen(yytext);
     if(yyleng <= 6){
-        inserer(yytext,"CONST_INT","Entier",nb_ligne,col-yyleng,atof(yytext),1);
+        inserer(yytext,"CONST_INT","INTEGER",nb_ligne,col-yyleng,atof(yytext),1);
+        yylval.ival=atoi(yytext);
         return CONST_INT;
     }
     else{
@@ -199,7 +204,8 @@ NE {
 {CONST_REAL} {
     col = col + strlen(yytext);
     if(yyleng <= 8){
-        inserer(yytext,"CONST_REAL","Reel",nb_ligne,col-yyleng,atof(yytext),1);
+        inserer(yytext,"CONST_REAL","REAL",nb_ligne,col-yyleng,atof(yytext),1);
+        yylval.fval=atof(yytext);
         return CONST_REAL;
     }
     else{
@@ -207,13 +213,15 @@ NE {
     }
 }
 {CONST_CHAR} {
-    inserer(yytext,"CONST_CHAR","",nb_ligne,col,0,1);
+    inserer(yytext,"CONST_CHAR","CHAR",nb_ligne,col,0,1);
     col = col + strlen(yytext);
+    yylval.cval=yytext[1];
     return CONST_CHAR;
 }
 {CONST_STRING} {
     col = col + strlen(yytext);
-    inserer(yytext,"CONST_STR","",nb_ligne,col-yyleng,0,1);
+    inserer(yytext,"CONST_STR","STRING",nb_ligne,col-yyleng,0,1);
+    yylval.sval=strdup(yytext);
     return CONST_STRING;
 }
 {COMMENTAIRE} {
@@ -229,6 +237,7 @@ NE {
     col = col + strlen(yytext);
     if(yyleng <= 20){
         inserer(yytext,"IDF","",nb_ligne,col-yyleng,0,1);
+        yylval.sval=strdup(yytext);
         return  IDF;
     }
     else{

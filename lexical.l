@@ -3,6 +3,7 @@
     #include<stdlib.h>
     #include<string.h>
     #include<math.h>
+    #include<limits.h>
     #include "syntax.tab.h"
     int nb_ligne=1;
     int col=1;
@@ -205,7 +206,7 @@ NE {
     col = col + strlen(yytext);
     if(yyleng <= 8){
         inserer(yytext,"CONST_REAL","REAL",nb_ligne,col-yyleng,atof(yytext),1);
-        yylval.fval=atof(yytext);
+        yylval.sval=yytext;
         return CONST_REAL;
     }
     else{
@@ -236,7 +237,7 @@ NE {
 {IDF} {
     col = col + strlen(yytext);
     if(yyleng <= 20){
-        inserer(yytext,"IDF","",nb_ligne,col-yyleng,0,1);
+        inserer(yytext,"IDF","",nb_ligne,col-yyleng,100008000,1);
         yylval.sval=strdup(yytext);
         return  IDF;
     }

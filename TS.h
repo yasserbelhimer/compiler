@@ -121,8 +121,9 @@ void afficherTs_IDF()
     while(p!=NULL)
     {
         strcpy(ch,"");
-        if(strcmp(p->info.TypeVar,"INTEGER")==0) sprintf(ch,"%d",(int)p->info.Val);
-        if(strcmp(p->info.TypeVar,"REAL")==0) sprintf(ch,"%.4f",p->info.Val);
+        if(strcmp(p->info.TypeVar,"INTEGER")==0 && p->info.Val<100000000) sprintf(ch,"%d",(int)p->info.Val);
+        if(strcmp(p->info.TypeVar,"REAL")==0 && p->info.Val<100000000) sprintf(ch,"%.4f",p->info.Val);
+        
 
         printf("     |------------------------|-----------------|-----------------|-----------------|------------|------------|\n");
         printf("     | %22s | %15s | %15s | %15s | %10d | %10d |\n",p->info.Entite,p->info.TypeLex,ch,p->info.TypeVar,p->info.ligne,p->info.col);
@@ -174,10 +175,16 @@ void ModifierTS(char Entite[], int cas,char b[],char type[]){
                 break;
 
             }
+            case 2:{
+                strcpy(p->info.TypeVar,b);     
+                break;
+
+            }            
         
-            default:
-            strcpy(p->info.TypeVar,b);  
+            default:{
+            strcpy(p->info.TypeLex,"CONST_IDF");  
             break;
-       }
+            }
+        }
     }
 }

@@ -27,6 +27,12 @@ extern int col;
 // int TabOrIdf = 0;
 char sauveType[10];
 char sauveChar[10];
+char sauvIDF[25];
+char sauvIDF2[25];
+int type=0;
+int div0=0;
+int cpt=0;
+int vr=0;
 void yyerror(char* msg);
 %}
 %union {
@@ -40,7 +46,7 @@ void yyerror(char* msg);
 %token ACCOLADE_OUVRANTE ACCOLADE_FERMANTE PARENTHESE_OUVRANTE PARENTHESE_FERMANTE
 %token CODE START <sval>IDF END <sval>INTEGER <sval>REAL <sval>CHAR <sval>STRING CONST WHILE EXECUTE WHEN DO OTHERWISE PROD
 %token <ival>CONST_INT
-%token <fval>CONST_REAL 
+%token <sval>CONST_REAL 
 %token <sval>CONST_STRING 
 %token <cval>CONST_CHAR 
 %left PLUS MOINS
@@ -55,8 +61,8 @@ DECLARATION:LISTE_DECLARATION
 ;
 LISTE_DECLARATION:  TYPE LISTE_IDF POINT_VIRGULE 
 |                   TYPE LISTE_IDF POINT_VIRGULE LISTE_DECLARATION
-|                   CONST TYPE IDF  EGAL CONSTANTE POINT_VIRGULE {DoubleDeclaration($3,nb_ligne,col);ModifierTS($3,2,sauveType,"");ModifierTS($3,1,sauveChar,sauveType);CompatibiliteType($3,sauveChar,nb_ligne,col);}
-|                   CONST TYPE IDF  EGAL CONSTANTE POINT_VIRGULE {DoubleDeclaration($3,nb_ligne,col);ModifierTS($3,2,sauveType,"");ModifierTS($3,1,sauveChar,sauveType);CompatibiliteType($3,sauveChar,nb_ligne,col);} LISTE_DECLARATION 
+|                   CONST TYPE IDF  EGAL CONSTANTE POINT_VIRGULE {DoubleDeclaration($3,nb_ligne,col);ModifierTS($3,2,sauveType,"");ModifierTS($3,1,sauveChar,sauveType);ModifierTS($3,3,"","");CompatibiliteType($3,sauveChar,nb_ligne,col);}
+|                   CONST TYPE IDF  EGAL CONSTANTE POINT_VIRGULE {DoubleDeclaration($3,nb_ligne,col);ModifierTS($3,2,sauveType,"");ModifierTS($3,1,sauveChar,sauveType);ModifierTS($3,3,"","");CompatibiliteType($3,sauveChar,nb_ligne,col);} LISTE_DECLARATION 
 ;
 TYPE: INTEGER {strcpy(sauveType,$1);}
 | REAL {strcpy(sauveType,$1);}
@@ -64,7 +70,7 @@ TYPE: INTEGER {strcpy(sauveType,$1);}
 | STRING {strcpy(sauveType,$1);}
 ;
 CONSTANTE: CONST_INT {itoa($1,sauveChar,10);} 
-| CONST_REAL  {gcvt($1,6,sauveChar);}
+| CONST_REAL  {strcpy(sauveChar,$1);}
 | CONST_STRING {strcpy(sauveChar,$1);}
 | CONST_CHAR  {sauveChar[0]='\'';sauveChar[1]=$1;sauveChar[2]='\'';sauveChar[3]='\0';}
 ;
@@ -81,11 +87,13 @@ LISTE_INSTRUCTION:  AFFECTATION
 |                   CONTROLE
 |                   CONTROLE LISTE_INSTRUCTION
 ;
-AFFECTATION:        IDF {IdfNonDeclarer($1,nb_ligne,col);} DEUX_POINTS EGAL EXPRESSION  POINT_VIRGULE
+AFFECTATION:        IDF {type=1;strcpy(sauvIDF,$1);IdfNonDeclarer($1,nb_ligne,col);ModifierConst($1,nb_ligne,col);} DEUX_POINTS EGAL EXPRESSION  POINT_VIRGULE{type=2;}
 ;
 BOUCLE: WHILE CONDITION EXECUTE ACCOLADE_OUVRANTE INSTRUCTIONS ACCOLADE_FERMANTE POINT_VIRGULE
 ;
-CONTROLE: WHEN CONDITION DO AFFECTATION OTHERWISE AFFECTATION 
+CONTROLE: WHEN CONDITION DO BLOCK OTHERWISE BLOCK 
+;
+BLOCK:AFFECTATION|BOUCLE|CONTROLE
 ;
 CONDITION: OPERAND OPERATEUR_LOGIQUE OPERAND
 ;
@@ -95,18 +103,33 @@ OPERATEUR_LOGIQUE: EQ | LT | GT | LE | GE | NE
 ;
 EXPRESSION: CONST_CHAR
 |           CONST_STRING
-|           EA
+|           EA     
+            {
+                DivisionPar0(sauvIDF,sauveChar,sauvIDF2,div0,cpt,vr,nb_ligne,col);
+                 div0=0;
+            }
 |           PRO
 ;
 EA:     EA PLUS EA 
 |       EA MOINS EA 
 |       EA MULT EA
-|       EA DIV EA
+|       EA DIV {div0=1;cpt=0;}EA 
 |       PARENTHESE_OUVRANTE EA PARENTHESE_FERMANTE
-|       IDF {IdfNonDeclarer($1,nb_ligne,col);}
-|       NOMBRE
+|       IDF {
+               vr=1;
+               strcpy(sauvIDF2,$1);
+               cpt++;
+               IdfNonDeclarer($1,nb_ligne,col);
+                if(type==1) {CompatibiliteType(sauvIDF,$1,nb_ligne,col);}
+            }
+|       NOMBRE { 
+                 vr=2;
+                 cpt++;
+                 if(type==1) {CompatibiliteType(sauvIDF,sauveChar,nb_ligne,col);}
+               }
 ;
-NOMBRE:CONST_INT|CONST_REAL
+NOMBRE:CONST_INT {itoa($1,sauveChar,10);} 
+|CONST_REAL {strcpy(sauveChar,$1);}
 ;
 PRO:   PROD PARENTHESE_OUVRANTE LISTE_EXP PARENTHESE_FERMANTE
 ;      

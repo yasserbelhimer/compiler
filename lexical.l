@@ -8,7 +8,6 @@
     int nb_ligne=1;
     int col=1;
     extern void inserer(char a[],char b[],char c[],int li,int cl,float val,int cas);
-    extern int PrintError(char* Type ,char* entite);
     extern void yyerror(const char* s);
 %}
 lettre_maj [A-Z]
@@ -199,7 +198,9 @@ NE {
         return CONST_INT;
     }
     else{
-        PrintError("Lexical error",yytext);
+        char err[200];
+        sprintf(err,"Erreur Lexicale , la taille  de la constante entiere  %s   a  depasse 6  : line %d  column %d  \n",yytext,nb_ligne,col-yyleng);
+        insererErr(err,1);     
     }
 };
 {CONST_REAL} {
@@ -210,7 +211,9 @@ NE {
         return CONST_REAL;
     }
     else{
-        PrintError("Lexical error",yytext);
+        char err[200];
+        sprintf(err,"Erreur Lexicale , la taille de la constante reel  %s   a  depasse 8  : line %d  column %d  \n",yytext,nb_ligne,col-yyleng);
+        insererErr(err,1); 
     }
 }
 {CONST_CHAR} {
@@ -242,10 +245,16 @@ NE {
         return  IDF;
     }
     else{
-        PrintError("Lexical error",yytext);
+        char err[200];
+        sprintf(err,"Erreur Lexicale , la taille de l'identificateur   %s   a  depasse 20  : line %d  column %d  entite: %s\n",yytext,nb_ligne,col-yyleng);
+        insererErr(err,1); 
     }
 };
 [ \t] {col = col + strlen(yytext);}
 \n {nb_ligne++;col = 1;}
-. PrintError("Lexical error",yytext);
+. {
+        char err[200];
+        sprintf(err,"Erreur Lexicale , entite inconnu   %s    : line %d  column %d  entite: %s\n",nb_ligne,col-yyleng,yytext);
+        insererErr(err,1); 
+}
 %%

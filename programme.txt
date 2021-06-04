@@ -6,22 +6,21 @@ CONST STRING Const2 = "string";
 STRING String;
 STRING String8;
 STRING String3;
-CONST INTEGER Const5 = 555;
+CONST INTEGER Const5 = 555.55;
 STRING String2;
 START
-    Var1:=0;
-    Var2 := 20/(Var1);
+    Var1:=0 Mpp;
+    Var2 := 22/(Var1);
     Var2 := 20/(0);
     $$
     Var3 := PROD(20 + 10 * 20,5);
     Var2 := 20 + 10 * 20;
-    ùùù
     Const1 := 20.0 - Var1;
     Var1 := (20 + (10 * 20  * (15*8.55)+ 15 + (8/12*18)));
-    Var3:=55-Const2;
+    Var3:=5555555;
     WHILE (Var1 + Var2) LT "A" EXECUTE
     {
-        Var1 := 1;
+        Var12 := 12222222;
     };
     $$
 

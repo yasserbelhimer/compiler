@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
   #include<math.h>
+#include    "TB_Erreur.h"
 #include    "TS.h"
 #include  "routine_sem.h"
 // #include "TSS.h"
@@ -143,10 +144,12 @@ int main() {
     if (yyin==NULL) 
         printf("ERROR \n");
     else 
+         init();
         yyparse();
     afficherTs_IDF();
     //afficherTs_MC_Sep(2);
     //afficherTs_MC_Sep(3);
+    afficherErr();
     fclose(yyin);
     return 0;
 }
@@ -157,11 +160,9 @@ int yywrap(){
 
 
 void yyerror (char* msg){
-    printf("%s : line %d  column %d ",msg,nb_ligne,col);
+        char err[200];
+        sprintf(err,"Erreur Syntaxique  : line %d  column %d  \n",nb_ligne,col);
+        insererErr(err,2); 
 }
 
-int PrintError(char* Type ,char* entite){
-    yyerror(Type);
-    printf(" entite: %s \n",entite);
-    exit(-1);       
-}
+

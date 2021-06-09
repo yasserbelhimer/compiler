@@ -116,7 +116,12 @@ LISTE_INSTRUCTION:  AFFECTATION
 |                   CONTROLE
 |                   CONTROLE LISTE_INSTRUCTION
 ;
-AFFECTATION:        IDF DEUX_POINTS EGAL EXPRESSION  POINT_VIRGULE
+AFFECTATION:        IDF DEUX_POINTS EGAL EXPRESSION  POINT_VIRGULE {
+    element = verifierexistetype($1);
+    if(element!=NULL){
+        printError("Symantec error variable non declarer",$1);
+    }
+}
 ;
 BOUCLE: WHILE CONDITION EXECUTE ACCOLADE_OUVRANTE INSTRUCTIONS ACCOLADE_FERMANTE POINT_VIRGULE
 ;
@@ -138,7 +143,12 @@ EA:     EA PLUS EA
 |       EA MULT EA
 |       EA DIV EA
 |       PARENTHESE_OUVRANTE EA PARENTHESE_FERMANTE
-|       IDF
+|       IDF {
+            element = verifierexistetype($1);
+            if(element!=NULL){
+                printError("Symantec error variable non declarer",$1);
+            }
+        }
 |       NOMBRE
 ;
 NOMBRE:CONST_INT|CONST_REAL

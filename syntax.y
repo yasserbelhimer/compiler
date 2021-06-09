@@ -118,9 +118,12 @@ LISTE_INSTRUCTION:  AFFECTATION
 ;
 AFFECTATION:        IDF DEUX_POINTS EGAL EXPRESSION  POINT_VIRGULE {
     element = verifierexistetype($1);
-    if(element!=NULL){
+    if(element!=NULL)
         printError("Symantec error variable non declarer",$1);
-    }
+    if(verifierConstate($1)==1)
+        printError("Symantec error une constante ne peut pas etre changer",$1);
+    
+    
 }
 ;
 BOUCLE: WHILE CONDITION EXECUTE ACCOLADE_OUVRANTE INSTRUCTIONS ACCOLADE_FERMANTE POINT_VIRGULE

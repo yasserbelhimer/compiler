@@ -23,6 +23,30 @@ list ts_idf=NULL;
 list ts_mc=NULL;
 list ts_sep=NULL;
 
+char logFileName[200];
+char logFileName2[200];
+void initLogFile()
+{
+
+    mkdir("logs");
+    strcpy(logFileName, "logs/TS+Quadr.log");
+    FILE *fichier = NULL;
+    fichier = fopen(logFileName, "w");    
+    if (fichier == NULL)
+    {
+        printf("Impossible d'ouvrir le fichier %s\n", logFileName);   
+    }
+    strcpy(logFileName2, "logs/Erreurs.log");
+    FILE *fichier2 = NULL;
+    fichier2 = fopen(logFileName2, "w");    
+    if (fichier2 == NULL)
+    {
+        printf("Impossible d'ouvrir le fichier %s\n", logFileName2);   
+    }
+
+     
+}
+
 list recherche(char entite[],int cas)
 {
 int i=0;
@@ -112,10 +136,15 @@ void inserer(char a[],char b[],char c[],int li,int cl,float val,int cas){
 
 void afficherTs_IDF()
 {
-    printf("\n     /*********************************   Table des symboles des Idfs/Consts   ******************************/\n\n");
+    FILE *fichier = NULL;
+    fichier = fopen(logFileName, "a");
+
+    printf("\n\n     /*********************************   Table des symboles des Idfs/Consts   ******************************/\n\n");
     printf("      --------------------------------------------------------------------------------------------------------\n");
     printf("     |         Entite         |     TypeLex     |       Val       |     TypeVar     |   Ligne    |    Col     |\n");
-
+    fprintf(fichier,"\n     /*********************************   Table des symboles des Idfs/Consts   ******************************/\n\n");
+    fprintf(fichier,"      --------------------------------------------------------------------------------------------------------\n");
+    fprintf(fichier,"     |         Entite         |     TypeLex     |       Val       |     TypeVar     |   Ligne    |    Col     |\n");
     list p=ts_idf;
     char *ch=(char*)malloc(100*sizeof(char)); 
     while(p!=NULL)
@@ -127,34 +156,49 @@ void afficherTs_IDF()
 
         printf("     |------------------------|-----------------|-----------------|-----------------|------------|------------|\n");
         printf("     | %22s | %15s | %15s | %15s | %10d | %10d |\n",p->info.Entite,p->info.TypeLex,ch,p->info.TypeVar,p->info.ligne,p->info.col);
+        fprintf(fichier,"     |------------------------|-----------------|-----------------|-----------------|------------|------------|\n");
+        fprintf(fichier,"     | %22s | %15s | %15s | %15s | %10d | %10d |\n",p->info.Entite,p->info.TypeLex,ch,p->info.TypeVar,p->info.ligne,p->info.col);
+
         p=p->svt;
     }
     printf("      --------------------------------------------------------------------------------------------------------\n\n");
+    fprintf(fichier,"      --------------------------------------------------------------------------------------------------------\n\n");    
 }
 
 void afficherTs_MC_Sep(int cas)
 {
+    FILE *fichier = NULL;
+    fichier = fopen(logFileName, "a");
+
     list p;
     if(cas==2){
       p=ts_mc;
       printf("\n     /********* Table des symboles des Mots cles *********/\n\n");
+      fprintf(fichier,"\n     /********* Table des symboles des Mots cles *********/\n\n");      
     }
     if(cas==3){
       p=ts_sep;
       printf("\n     /********* Table des symboles des separateurs *******/\n\n");
+      fprintf(fichier,"\n     /********* Table des symboles des separateurs *******/\n\n");   
     }
     
     printf("      ---------------------------------------------------\n");
     printf("     |   Entite   |   TypeLex  |   Ligne    |    Col     |\n");
+    fprintf(fichier,"      ---------------------------------------------------\n");
+    fprintf(fichier,"     |   Entite   |   TypeLex  |   Ligne    |    Col     |\n");
 
     
     while(p!=NULL)
     {
         printf("     |------------|------------|------------|------------|\n");
         printf("     | %10s | %10s | %10d | %10d |\n",p->info.Entite,p->info.TypeLex,p->info.ligne,p->info.col);
+        fprintf(fichier,"     |------------|------------|------------|------------|\n");
+        fprintf(fichier,"     | %10s | %10s | %10d | %10d |\n",p->info.Entite,p->info.TypeLex,p->info.ligne,p->info.col);
+
         p=p->svt;
     }
     printf("      ---------------------------------------------------\n\n");
+    fprintf(fichier,"      ---------------------------------------------------\n\n");    
 }
 
 void ModifierTS(char Entite[], int cas,char b[],char type[]){

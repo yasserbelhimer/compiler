@@ -55,19 +55,39 @@ switch (cas)
 
 void afficherErr(){
     int i,ct=1;
-    printf("\n            *********    La liste des Erreurs      *********\n\n\n");
+    FILE *fichier = NULL;
+    fichier = fopen(logFileName2, "a");    
+
+    if(Lex.nblemt>0 || Sem.nblemt>0 || Syn.nblemt>0){
+      printf("\n\n\n       *********    La liste des Erreurs      *********");
+      fprintf(fichier,"\n\n\n       *********    La liste des Erreurs      *********");      
+    }
+    if(Lex.nblemt>0){
+      printf("\n\n");
+      fprintf(fichier,"\n\n");      
+    }  
+
     for(i=0;i<Lex.nblemt;i++){
       printf(" %d).  %s",ct,Lex.t[i]);
+      fprintf(fichier," %d).  %s",ct,Lex.t[i]);
       ct++;
     }
-    printf("\n\n");
+    if(Syn.nblemt>0){
+      printf("\n\n");
+      fprintf(fichier,"\n\n");
+    }  
     for(i=0;i<Syn.nblemt;i++){
        printf(" %d).  %s",ct,Syn.t[i]);
+       fprintf(fichier," %d).  %s",ct,Syn.t[i]);
        ct++;
     }
-    printf("\n\n");
+    if(Sem.nblemt>0){
+      printf("\n\n");
+      fprintf(fichier,"\n\n");
+    }    
     for(i=0;i<Sem.nblemt;i++){
         printf(" %d).  %s",ct,Sem.t[i]);
+        fprintf(fichier," %d).  %s",ct,Sem.t[i]);        
         ct++;
     }
 }

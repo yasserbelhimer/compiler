@@ -1,27 +1,114 @@
 CODE Algo
-INTEGER  Var1,Var2,Var3;
-CONST CHAR Const1 = 'A';
-CONST STRING Const2 = "string";
+INTEGER  Var1  ,   Var2   ,   Var3;
+REAL X1,X2,X3;
+CONST CHAR Const1 = 
+
+
+                               'A'
+                               
+                               
+                               
+                               
+                               ;
+CONST STRING 
+
+
+
+                                                         
+                                                         
+                                                         
+                                                         
+                                                         
+                                                         
+                                                         
+                                                         
+                                                         Const2 = 
+
+
+
+
+
+
+
+
+
+"string"
+
+
+;
 
 STRING String;
 STRING String8;
-STRING String3;
+STRING 
+String3;
+INTEGER  Vart   
+,   
+
+
+    Var1   ;
+
+
+
+
+
 CONST INTEGER Const5 = 555.55;
+
+
+CONST INTEGER Const8 = 555;
 STRING String2;
 START
-    Var1:=0 Mpp;
-    Var2 := 22/(Var1);
-    Var2 := 20/(0);
-    $$
-    Var3 := PROD(20 + 10 * 20,5);
+
+Var1:=X1+X2+X3;
+
+
+$
+    Var3 := PROD(20 + 10 * 20,5 - 8 + 3 - 8 + 6,15*45 - 59);
+    
     Var2 := 20 + 10 * 20;
     Const1 := 20.0 - Var1;
-    Var1 := (20 + (10 * 20  * (15*8.55)+ 15 + (8/12*18)));
-    Var3:=5555555;
-    WHILE (Var1 + Var2) LT "A" EXECUTE
+    
+    Var1 := (20 + (10.55 * 20  * (Const1*8.55)+ 15 * (8/12*18)));
+    Var3:=-55;
+    X1:=20.0 + 50.202 + X3 + 20 + 199.22;
+$
+    $ Test WHILE $
+     
+        WHILE (5*3 + 5/5) LT "a" EXECUTE
     {
-        Var12 := 12222222;
-    };
-    $$
+        Var12 := 122;
+        Var2 := 22/(((Var1)));
+        Var2 := 20/(0);
+        WHILE (888*98/10) LT 'a' EXECUTE
+        {
+            Var2 := 20/(0);
+            WHILE (100 - 20) LT 'a' EXECUTE
+            {
+                Var2 := 20/(0);
+            };
 
+        };
+        Var2 := 1999;
+    };
+    
+  
+  
+  
+    $ Test WHEn $
+
+    $
+    WHEN "555" EQ (5 + 3)
+    DO 
+        Var1:= 1999;
+    OTHERWISE
+        WHEN "sss" GT 's'
+        DO 
+            Var1:= PROD(555,12121 + +5 - 5454 *99/8,5);
+        OTHERWISE
+             WHILE (100) LT 500 EXECUTE
+            {
+                Var2 := 20*80 - 60;
+            };
+    $                 
+    
 END.
+

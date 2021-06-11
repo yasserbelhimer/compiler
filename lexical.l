@@ -18,8 +18,8 @@ IDF {lettre_maj}({lettre}|{chiffre})*
 CONST_INT ("-"|"+")?{chiffre}+
 CONST_REAL ("-"|"+")?{chiffre}+"."{chiffre}+
 CONST_CHAR "'".?"'"
-CONST_STRING "\"".*"\""
-COMMENTAIRE "$"[^"$"]*"$"
+CONST_STRING "\""[^"\""]*"\""
+COMMENTAIRE "$"[^$]*"$"
 %%
 CODE {
     inserer(yytext,"MotCle","",nb_ligne,col,0,2); 
@@ -201,6 +201,9 @@ NE {
         char err[200];
         sprintf(err,"Erreur Lexicale , la taille  de la constante entiere  %s   a  depasse 6  : line %d  column %d  \n",yytext,nb_ligne,col-yyleng);
         insererErr(err,1);     
+        afficherErr();
+        exit(-1);
+
     }
 };
 {CONST_REAL} {
@@ -214,6 +217,9 @@ NE {
         char err[200];
         sprintf(err,"Erreur Lexicale , la taille de la constante reel  %s   a  depasse 8  : line %d  column %d  \n",yytext,nb_ligne,col-yyleng);
         insererErr(err,1); 
+        afficherErr();
+        exit(-1);
+
     }
 }
 {CONST_CHAR} {
@@ -236,25 +242,32 @@ NE {
         }
        i=i+1;
     }
+    col++;
 } 
 {IDF} {
     col = col + strlen(yytext);
     if(yyleng <= 20){
         inserer(yytext,"IDF","",nb_ligne,col-yyleng,100008000,1);
-        yylval.sval=strdup(yytext);
-        return  IDF;
+        yylval.sval=strdup(yytext); 
+        return  idf;
     }
     else{
         char err[200];
         sprintf(err,"Erreur Lexicale , la taille de l'identificateur   %s   a  depasse 20  : line %d  column %d  entite: %s\n",yytext,nb_ligne,col-yyleng);
         insererErr(err,1); 
+        afficherErr();
+        exit(-1);
+
     }
 };
 [ \t] {col = col + strlen(yytext);}
 \n {nb_ligne++;col = 1;}
 . {
+        
         char err[200];
-        sprintf(err,"Erreur Lexicale , entite inconnu   %s    : line %d  column %d  entite: %s\n",nb_ligne,col-yyleng,yytext);
+        sprintf(err,"Erreur Lexicale , entite inconnu    : line %d  column %d  entite: %s\n",nb_ligne,col,yytext);
         insererErr(err,1); 
+        afficherErr();
+        exit(-1);
 }
 %%

@@ -1,40 +1,15 @@
   
 %{
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <io.h>
+#include "headers.h"
 
-#include "structs.h"
-#include "ts.h"
-#include "routines.h"
-// #include "TSS.h"
-// #include "pgm.h"
 
-extern int yylex();
-extern int yyparse();
-extern FILE* yyin;
-extern int nb_ligne;
-extern int col;
 int i = 0;
+int typeInst = 0;
 char sauveType[10];
 char sauvIdfIcompatible[25];
 char sauvIdfIcompatible2[25];
 Element *element;
-// values val;
-// int tabPile[1000];
-// int indexPile=-1;
-// int qc=0,typeExp;
-// int tmpQc = 1,optionIDF;
-// int Fin_if=0;
-// char tmp [20];
-// char idf [20];
-// int type,myIndex,mode;
-// int TabOrIdf = 0;
-void yyerror(char* msg);
-int printError(char* Type ,char* entite);
-int printIncompatibleTypeError(char* type1,char* type2);
+
 %}
 %union {
     int ival;
@@ -78,7 +53,18 @@ TYPE: INTEGER {
         strcpy(sauveType,$1);
     }
 ;
-CONSTANTE: CONST_INT | CONST_REAL | CONST_STRING | CONST_CHAR
+CONSTANTE:  CONST_INT {
+                strcpy(sauveType,"INTEGER");
+            }
+|           CONST_REAL {
+                strcpy(sauveType,"REAL");
+            }
+|           CONST_STRING {
+                strcpy(sauveType,"STRING");
+            }
+|           CONST_CHAR {
+                strcpy(sauveType,"CHAR");
+            }
 ;
 LISTE_IDF:  IDF VIRGULE LISTE_IDF {
         element = verifierexistetype($1);
@@ -99,13 +85,13 @@ LISTE_IDF:  IDF VIRGULE LISTE_IDF {
         }
     }
 ;
-DECLARATION_CONSTANTE: TYPE IDF EGAL CONSTANTE {
-        element = verifierexistetype($2);
+DECLARATION_CONSTANTE: IDF EGAL CONSTANTE {
+        element = verifierexistetype($1);
         if(element!=NULL){
             inserertype(element,sauveType,"CONSTANTE");
         }
         else{
-            printError("Symantec error double declaration",$2);
+            printError("Symantec error double declaration",$1);
         }
     }
 ;
@@ -119,16 +105,12 @@ LISTE_INSTRUCTION:  AFFECTATION
 |                   CONTROLE
 |                   CONTROLE LISTE_INSTRUCTION
 ;
-AFFECTATION:        IDF DEUX_POINTS EGAL EXPRESSION  POINT_VIRGULE {
-    element = verifierexistetype($1);
-    if(element!=NULL)
-        printError("Symantec error variable non declarer",$1);
-    if(verifierConstate($1)==1)
-        printError("Symantec error une constante ne peut pas etre changer",$1);
-    strcpy(sauvIdfIcompatible,$1);
-    
-    
-}
+AFFECTATION:        IDF {
+                        idfNotDeclard($1);  
+                        verifierConstate($1);                          
+                        strcpy(sauvIdfIcompatible,$1);
+                        typeInst = 1;
+                    } DEUX_POINTS EGAL EXPRESSION  POINT_VIRGULE {typeInst = 0 ;}
 ;
 BOUCLE: WHILE CONDITION EXECUTE ACCOLADE_OUVRANTE INSTRUCTIONS ACCOLADE_FERMANTE POINT_VIRGULE
 ;
@@ -151,19 +133,13 @@ EA:     EA PLUS EA
 |       EA DIV EA
 |       PARENTHESE_OUVRANTE EA PARENTHESE_FERMANTE
 |       IDF {
-            Element *element1 = rechercherIdf($1);
-            if (element1 != NULL && (strcmp(element1->TypeEntite, "") == 0))
-                printError("Symantec error variable non declarer",$1);
-            Element *element2 = rechercherIdf(sauvIdfIcompatible);
-
-            if(element1 != NULL && element2 != NULL && strcmp(element1->TypeEntite,element2->TypeEntite)!=0)
-                printIncompatibleTypeError(element1->TypeEntite,element2->TypeEntite);
-            
+            idfNotDeclard($1);
+            if(typeInst==1)
+                compatibiliteType(sauvIdfIcompatible,$1,1);            
         }
 |       NOMBRE {
-            Element *element = rechercherIdf(sauvIdfIcompatible);
-            if(element != NULL && sauvIdfIcompatible2 != NULL && strcmp(element->TypeEntite,sauvIdfIcompatible2)!=0)
-                printIncompatibleTypeError(element->TypeEntite,sauvIdfIcompatible2);
+            if(typeInst==1)
+                compatibiliteType(sauvIdfIcompatible,sauvIdfIcompatible2,2);
 }
 ;
 NOMBRE:CONST_INT {
@@ -196,20 +172,4 @@ int main() {
 
 int yywrap(){
 
-}
-
-
-void yyerror (char* msg){
-    printf("%s : line %d  column %d ",msg,nb_ligne,col);
-}
-
-int printError(char* Type ,char* entite){
-    yyerror(Type);
-    printf(" entite: %s \n",entite);
-    exit(-1);       
-}
-int printIncompatibleTypeError(char* type1,char* type2){
-    yyerror("Symantec error incompatibilte de type");
-    printf(" %s est incompatible avec %s \n",type1,type2);
-    exit(-1);       
 }

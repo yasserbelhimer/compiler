@@ -7,7 +7,9 @@
     int nb_ligne=1;
     int col=1;
     extern YYSTYPE yylval;
-    extern void insererIdfLex (char NomEntite[], char CodeEntite[],int ligne,int col);
+    extern void insererIdfLex (char NomEntite[], char CodeEntite[]);
+    extern void insererSeparateurLex (char separateur[]);
+    extern void insererMotCleLex(char keyword[]);
     extern int printError(char* Type ,char* entite);
     extern void yyerror(const char* s);
 %}
@@ -23,171 +25,171 @@ CONST_STRING "\"".*"\""
 COMMENTAIRE "$"[^"$"]*"$"
 %%
 CODE {
-    //  inserer(yytext,"MotCle","",nb_ligne,col,0,2); 
+    insererMotCleLex(yytext); 
     col = col + strlen(yytext);
     return CODE;
 }
 START {
-    //  inserer(yytext,"MotCle","",nb_ligne,col,0,2);
+    insererMotCleLex(yytext);
     col = col + strlen(yytext);
     return START;
 }
-"END." {
-    //  inserer(yytext,"MotCle","",nb_ligne,col,0,2);
+END {
+    insererMotCleLex(yytext);
     col = col + strlen(yytext);
     return END;
 }
 INTEGER {
-    //  inserer(yytext,"MotCle","",nb_ligne,col,0,2);
+    insererMotCleLex(yytext);
     yylval.sval=strdup(yytext);
     col = col + strlen(yytext);
     return INTEGER;
 }
 REAL {
-    //  inserer(yytext,"MotCle","",nb_ligne,col,0,2);
+    insererMotCleLex(yytext);
     yylval.sval=strdup(yytext);
     col = col + strlen(yytext);
     return REAL;
 }
 CHAR {
-    //  inserer(yytext,"MotCle","",nb_ligne,col,0,2);
+    insererMotCleLex(yytext);
     yylval.sval=strdup(yytext);
     col = col + strlen(yytext);
     return CHAR;
 }
 STRING {
-    //  inserer(yytext,"MotCle","",nb_ligne,col,0,2);
+    insererMotCleLex(yytext);
     yylval.sval=strdup(yytext);
     col = col + strlen(yytext);
     return STRING;
 }
 CONST {
-    //  inserer(yytext,"MotCle","",nb_ligne,col,0,2);
+    insererMotCleLex(yytext);
     col = col + strlen(yytext);
     return CONST;
 }
 WHILE {
-    //  inserer(yytext,"MotCle","",nb_ligne,col,0,2);
+    insererMotCleLex(yytext);
     col = col + strlen(yytext);
     return WHILE;
 }
 EXECUTE {
-    //  inserer(yytext,"MotCle","",nb_ligne,col,0,2);
+    insererMotCleLex(yytext);
     col = col + strlen(yytext);
     return EXECUTE;
 }
 WHEN {
-    //  inserer(yytext,"MotCle","",nb_ligne,col,0,2);
+    insererMotCleLex(yytext);
     col = col + strlen(yytext);
     return WHEN;
 }
 DO {
-    //  inserer(yytext,"MotCle","",nb_ligne,col,0,2);
+    insererMotCleLex(yytext);
     col = col + strlen(yytext);
     return DO;
 }
 OTHERWISE {
-    //  inserer(yytext,"MotCle","",nb_ligne,col,0,2);
+    insererMotCleLex(yytext);
     col = col + strlen(yytext);
     return OTHERWISE;
 }
 PROD {
-    //  inserer(yytext,"MotCle","",nb_ligne,col,0,2);
+    insererMotCleLex(yytext);
     col = col + strlen(yytext);
     return PROD;
 }
 = {
-    //  inserer(yytext,"Sep","",nb_ligne,col,0,3);
+    insererSeparateurLex(yytext);
     col = col + strlen(yytext);
     return EGAL;
 }
 : {
-    //  inserer(yytext,"Sep","",nb_ligne,col,0,3);
+    insererSeparateurLex(yytext);
     col = col + strlen(yytext);
     return DEUX_POINTS;
 }
 ; {
-    //  inserer(yytext,"Sep","",nb_ligne,col,0,3);
+    insererSeparateurLex(yytext);
     col = col + strlen(yytext);
     return POINT_VIRGULE;
 }
 , {
-    //  inserer(yytext,"Sep","",nb_ligne,col,0,3);
+    insererSeparateurLex(yytext);
     col = col + strlen(yytext);
     return VIRGULE;
 }
 "." {
-    //  inserer(yytext,"Sep","",nb_ligne,col,0,3);
+    insererSeparateurLex(yytext);
     col = col + strlen(yytext);
     return POINT;
 }
 "+" {
-    //  inserer(yytext,"Sep","",nb_ligne,col,0,3);
+    insererSeparateurLex(yytext);
     col = col + strlen(yytext);
     return PLUS;
 }
 "-" {
-    //  inserer(yytext,"Sep","",nb_ligne,col,0,3);
+    insererSeparateurLex(yytext);
     col = col + strlen(yytext);
     return MOINS;
 }
 "*" {
-    //  inserer(yytext,"Sep","",nb_ligne,col,0,3);
+    insererSeparateurLex(yytext);
     col = col + strlen(yytext);
     return MULT;
 }
 "/" {
-    //  inserer(yytext,"Sep","",nb_ligne,col,0,3);
+    insererSeparateurLex(yytext);
     col = col + strlen(yytext);
     return DIV;
 }
 EQ {
-    //  inserer(yytext,"Sep","",nb_ligne,col,0,3);
+    insererSeparateurLex(yytext);
     col = col + strlen(yytext);
     return EQ;
 }
 LT {
-    //  inserer(yytext,"Sep","",nb_ligne,col,0,3);
+    insererSeparateurLex(yytext);
     col = col + strlen(yytext);
     return LT;
 }
 GT {
-    //  inserer(yytext,"Sep","",nb_ligne,col,0,3);
+    insererSeparateurLex(yytext);
     col = col + strlen(yytext);
     return GT;
 }
 LE {
-    //  inserer(yytext,"Sep","",nb_ligne,col,0,3);
+    insererSeparateurLex(yytext);
     col = col + strlen(yytext);
     return LE;
 }
 GE {
-    //  inserer(yytext,"Sep","",nb_ligne,col,0,3);
+    insererSeparateurLex(yytext);
     col = col + strlen(yytext);
     return GE;
 }
 NE {
-    //  inserer(yytext,"Sep","",nb_ligne,col,0,3);
+    insererSeparateurLex(yytext);
     col = col + strlen(yytext);
     return NE;
 }
 "{" {
-    //  inserer(yytext,"Sep","",nb_ligne,col,0,3);
+    insererSeparateurLex(yytext);
     col = col + strlen(yytext);
     return ACCOLADE_OUVRANTE;
 }
 "}" {
-    //  inserer(yytext,"Sep","",nb_ligne,col,0,3);
+    insererSeparateurLex(yytext);
     col = col + strlen(yytext);
     return ACCOLADE_FERMANTE;
 }
 "(" {
-    //  inserer(yytext,"Sep","",nb_ligne,col,0,3);
+    insererSeparateurLex(yytext);
     col = col + strlen(yytext);
     return PARENTHESE_OUVRANTE;
 }
 ")" {
-    //  inserer(yytext,"Sep","",nb_ligne,col,0,3);
+    insererSeparateurLex(yytext);
     col = col + strlen(yytext);
     return PARENTHESE_FERMANTE;
 }
@@ -234,7 +236,7 @@ NE {
     col = col + strlen(yytext);
     if(yyleng <= 20){
         yylval.sval=strdup(yytext);
-        insererIdfLex(yytext,"IDF",nb_ligne,col-yyleng);
+        insererIdfLex(yytext,"IDF");
         return  IDF;
     }
     else{

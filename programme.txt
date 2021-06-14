@@ -16,4 +16,10 @@ START
     {
         Var1 := 1;
     };
+
+    WHEN 4 GT 5
+        DO 
+            Var1:= 1;
+        OTHERWISE
+            Var2 := 2;
 END.

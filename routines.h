@@ -6,7 +6,7 @@
 Element *verifierexistetype(char nomEntite[])
 {
     Element *element = rechercherIdf(nomEntite);
-    if (element != NULL && (strcmp(element->TypeEntite, "") != 0))
+    if (element != NULL && (strcmp(element->typeEntite, "") != 0))
     {
         return NULL;
     }
@@ -21,8 +21,8 @@ Element *verifierexistetype(char nomEntite[])
  */
 void inserertype(Element *element, char type[], char typeDeclaration[])
 {
-    strcpy(element->TypeEntite, type);
-    strcpy(element->TypeDeclaration, typeDeclaration);
+    strcpy(element->typeEntite, type);
+    strcpy(element->typeDeclaration, typeDeclaration);
 }
 /**
 * Verifier si un idf est une constante ou variable, Affiche une erreur semantique et sort de programme si l'entite est une constante
@@ -31,7 +31,7 @@ void inserertype(Element *element, char type[], char typeDeclaration[])
 void verifierConstate(char nomEntite[])
 {
     Element *element = rechercherIdf(nomEntite);
-    if (element != NULL && (strcmp(element->TypeDeclaration, "CONSTANTE") == 0))
+    if (element != NULL && (strcmp(element->typeDeclaration, "CONSTANTE") == 0))
         printError("Symantec error une constante ne peut pas etre changer", nomEntite);
 }
 /**
@@ -56,16 +56,16 @@ void compatibiliteType(char nomEntite1[], char nomEntite2[], int type)
     if (type == 1)
     {
         Element *element2 = rechercherIdf(nomEntite2);
-        if (strcmp(element1->TypeEntite, element2->TypeEntite) != 0)
+        if (strcmp(element1->typeEntite, element2->typeEntite) != 0)
         {
-            printIncompatibleTypeError(element1->TypeEntite, element2->TypeEntite);
+            printIncompatibleTypeError(element1->typeEntite, element2->typeEntite);
         }
     }
     else if (type == 2)
     {
-        if (strcmp(element1->TypeEntite, nomEntite2) != 0)
+        if (strcmp(element1->typeEntite, nomEntite2) != 0)
         {
-            printIncompatibleTypeError(element1->TypeEntite, nomEntite2);
+            printIncompatibleTypeError(element1->typeEntite, nomEntite2);
         }
     }
 }

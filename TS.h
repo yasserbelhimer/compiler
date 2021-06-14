@@ -4,31 +4,24 @@
  */
 void initialisation()
 {
-    time_t seconds;
-    seconds = time(NULL);
-    mkdir("logs");
-    sprintf(logFileName, "logs/logs-%d.log", seconds);
     FILE *fichier = NULL;
-    fichier = fopen(logFileName, "w");
-    if (fichier != NULL)
-    {
-        fprintf(fichier, "\n/******************************   logs de l'instance %d   ******************************/\n\n", seconds);
-    }
-    else
-        printf("Impossible d'ouvrir le fichier %s\n", logFileName);
+    fichier = fopen("ts.log", "w");
+    if (fichier == NULL)
+        printf("Impossible d'initialiser le fichier ts.log\n");
+    fclose(fichier);
 }
 /**
  * Recherche une entite dans la table des symboles des idfs
- * @param char NomEntite[] nom de l'entité
+ * @param char nomEntite[] nom de l'entité
  * @param char code[] code de l'entité
  * @return Element retourne l'element de la liste s'il existe sinon retourne NULL
  */
-Element* rechercherIdf(char NomEntite[])
+Element *rechercherIdf(char nomEntite[])
 {
-    Element* p = listIdf;
+    Element *p = listIdf;
     while (p != NULL)
     {
-        if (strcmp(NomEntite, p->NomEntite) == 0)
+        if (strcmp(nomEntite, p->nomEntite) == 0)
             return p;
         p = p->svt;
     }
@@ -37,48 +30,32 @@ Element* rechercherIdf(char NomEntite[])
 
 /**
  * Inserer un idf a la fin de la table des symboles de idf s'il n'est pas encore inseré.
- * @param char NomEntite[] nom de l'entité
- * @param char CodeEntite[] code de l'entité
- * @param int ligne la ligne ou se trouve l'entité
- * @param int col la collone ou se trouve l'entité
+ * @param char nomEntite[] nom de l'entité
+ * @param char codeEntite[] code de l'entité
  * @return void
  */
-void insererIdfLex(char NomEntite[], char CodeEntite[], int ligne, int col)
+void insererIdfLex(char nomEntite[], char codeEntite[])
 {
-    FILE *fichier = NULL;
-    fichier = fopen(logFileName, "a");
-    if (fichier != NULL)
+    if (rechercherIdf(nomEntite) == NULL)
     {
-        fprintf(fichier, "Insertion de l'idf %s dans la table des symboles: ligne %d collone %d-----------------\n", NomEntite, ligne, col);
-        if (rechercherIdf(NomEntite) == NULL)
+        Element *p = malloc(sizeof(Element));
+        strcpy(p->nomEntite, nomEntite);
+        strcpy(p->codeEntite, codeEntite);
+        strcpy(p->typeEntite, "");
+        strcpy(p->typeDeclaration, "UNDEFINED");
+        p->svt = NULL;
+        if (listIdf == NULL)
         {
-            Element* p = malloc(sizeof(Element));
-            strcpy(p->NomEntite, NomEntite);
-            strcpy(p->CodeEntite, CodeEntite);
-            strcpy(p->TypeEntite, "");
-            strcpy(p->TypeDeclaration, "UNDEFINED");
-            p->svt = NULL;
-            if (listIdf == NULL)
-            {
-                listIdf = p;
-            }
-            else
-            {
-                Element* temp = listIdf;
-                while (temp->svt != NULL)
-                    temp = temp->svt;
-                temp->svt = p;
-            }
-            fprintf(fichier, "Insertion de l'idf %s dans la table des symboles: ligne %d collone %d----------------- Ok\n\n", NomEntite, ligne, col);
+            listIdf = p;
         }
         else
         {
-            fprintf(fichier, "%s existe deja dans la table des symboles!\n");
-            fprintf(fichier, "Insertion de l'idf %s dans la table des symboles: ligne %d collone %d----------------- Failed\n\n", NomEntite, ligne, col);
+            Element *temp = listIdf;
+            while (temp->svt != NULL)
+                temp = temp->svt;
+            temp->svt = p;
         }
     }
-    else
-        printf("Impossible d'ouvrir le fichier %s\n", logFileName);
 }
 
 /**
@@ -88,20 +65,164 @@ void insererIdfLex(char NomEntite[], char CodeEntite[], int ligne, int col)
 void afficherIdf()
 {
     FILE *fichier = NULL;
-    fichier = fopen("ts.log", "w");
+    fichier = fopen("ts.log", "a");
     if (fichier != NULL)
     {
         fprintf(fichier, "\n/*********************************   Table des symboles des Idfs/Consts   ******************************/\n\n");
-        fprintf(fichier, "--------------------------------------------------------------------------------------------------------\n");
-        fprintf(fichier, "|            NomEntite            |     CodeEntite     |     CodeEntite     |       TypeDeclaration       |\n");
-        Element* p = listIdf;
+        fprintf(fichier, "----------------------------------------------------------------------------------------------------------\n");
+        fprintf(fichier, "|           Nom Entite            |     Code Entite    |    Type Entite     |      Type Declaration       |\n");
+        Element *p = listIdf;
         while (p != NULL)
         {
-            fprintf(fichier, "|---------------------------------|--------------------|--------------------|-----------------------|\n");
-            fprintf(fichier, "| %25s       | %13s      | %13s      | %15s       |\n", p->NomEntite, p->CodeEntite,p->TypeEntite, p->TypeDeclaration);
+            fprintf(fichier, "|---------------------------------|--------------------|--------------------|-----------------------------|\n");
+            fprintf(fichier, "| %25s       | %13s      | %13s      | %21s       |\n", p->nomEntite, p->codeEntite, p->typeEntite, p->typeDeclaration);
             p = p->svt;
         }
-        fprintf(fichier, "--------------------------------------------------------------------------------------------------------\n\n");
+        fprintf(fichier, "----------------------------------------------------------------------------------------------------------\n\n");
+    }
+    else
+        printf("Impossible d'ouvrir le fichier ts.log\n");
+
+    fclose(fichier);
+}
+
+/**
+ * Recherche un separateur dans la table des symboles des separateurs
+ * @param char separateur[] le separateurs
+ * @return Separateur retourne le separateur de la liste s'il existe sinon retourne NULL
+ */
+Separateur *rechercherSeparateur(char separateur[])
+{
+    Separateur *p = listSeparateurs;
+    while (p != NULL)
+    {
+        if (strcmp(separateur, p->separateur) == 0)
+            return p;
+        p = p->svt;
+    }
+    return NULL;
+}
+
+/**
+ * Inserer un separateur a la fin de la table des symboles des separateur s'il n'est pas encore inseré.
+ * @param char separateur[] le separateur
+ * @return void
+ */
+void insererSeparateurLex(char separateur[])
+{
+    if (rechercherSeparateur(separateur) == NULL)
+    {
+        Separateur *p = malloc(sizeof(Separateur));
+        strcpy(p->separateur, separateur);
+        strcpy(p->code, "SEP");
+        p->svt = NULL;
+        if (listSeparateurs == NULL)
+        {
+            listSeparateurs = p;
+        }
+        else
+        {
+            Separateur *temp = listSeparateurs;
+            while (temp->svt != NULL)
+                temp = temp->svt;
+            temp->svt = p;
+        }
+    }
+}
+
+/**
+ * Afficher la table des symboles de separateurs.
+ * @return void
+ */
+void afficherSeparateurs()
+{
+    FILE *fichier = NULL;
+    fichier = fopen("ts.log", "a");
+    if (fichier != NULL)
+    {
+        fprintf(fichier, "\n/**   Table des symboles des Separateur  **/\n\n");
+        fprintf(fichier, "-------------------------------------------\n");
+        fprintf(fichier, "|        Code        |     Separateur     |\n");
+        Separateur *p = listSeparateurs;
+        while (p != NULL)
+        {
+            fprintf(fichier, "|--------------------|--------------------|\n");
+            fprintf(fichier, "| %10s         | %10s         |\n", p->code, p->separateur);
+            p = p->svt;
+        }
+        fprintf(fichier, "-------------------------------------------\n\n");
+    }
+    else
+        printf("Impossible d'ouvrir le fichier ts.log\n");
+
+    fclose(fichier);
+}
+
+/**
+ * Recherche un mot cle dans la table des symboles des mots cles
+ * @param char keyword[] le mot cle
+ * @return Keyword keyword retourne le mot cle s'il existe sinon retourne NULL
+ */
+Keyword *rechercherKeyword(char keyword[])
+{
+    Keyword *p = listMotsCles;
+    while (p != NULL)
+    {
+        if (strcmp(keyword, p->keyword) == 0)
+            return p;
+        p = p->svt;
+    }
+    return NULL;
+}
+
+/**
+ * Inserer un mot cle a la fin de la table des symboles des separateur s'il n'est pas encore inseré.
+ * @param char keyword[] le mot cle
+ * @return void
+ */
+void insererMotCleLex(char keyword[])
+{
+    if (rechercherSeparateur(keyword) == NULL)
+    {
+        Keyword *p = malloc(sizeof(Keyword));
+        strcpy(p->keyword, keyword);
+        strcpy(p->code, "MOT_CLE");
+        p->svt = NULL;
+        if (listMotsCles == NULL)
+        {
+            listMotsCles = p;
+        }
+        else
+        {
+            Keyword *temp = listMotsCles;
+            while (temp->svt != NULL)
+                temp = temp->svt;
+            temp->svt = p;
+        }
+    }
+}
+
+/**
+ * Afficher la table des symboles des mots cles.
+ * @return void
+ */
+void afficherKeywords()
+{
+    FILE *fichier = NULL;
+    fichier = fopen("ts.log", "a");
+    if (fichier != NULL)
+    {
+        fprintf(fichier, "\n/**   Table des symboles des mots cles  **/\n\n");
+        fprintf(fichier, "-------------------------------------------\n");
+        fprintf(fichier, "|        Code        |       Mot cle      |\n");
+        Keyword *p = listMotsCles;
+        while (p != NULL)
+        {
+            fprintf(fichier, "|--------------------|--------------------|\n");
+            fprintf(fichier, "| %10s         | %10s         |\n", p->code, p->keyword);
+            p = p->svt;
+        }
+        fprintf(fichier, "-------------------------------------------\n\n");
     }
     else
         printf("Impossible d'ouvrir le fichier ts.log\n");

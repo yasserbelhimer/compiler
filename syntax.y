@@ -30,7 +30,7 @@ Element *element;
 %start axiom
 %nonassoc MOINSU
 %%
-axiom: CODE IDF DECLARATION START INSTRUCTIONS END {printf("Execute avec succes\n");YYACCEPT;}
+axiom: CODE IDF DECLARATION START INSTRUCTIONS END POINT {printf("Execute avec succes\n");YYACCEPT;}
 ;
 DECLARATION:LISTE_DECLARATION
 |
@@ -105,12 +105,12 @@ LISTE_INSTRUCTION:  AFFECTATION
 |                   CONTROLE
 |                   CONTROLE LISTE_INSTRUCTION
 ;
-AFFECTATION:        IDF {
+AFFECTATION:        IDF DEUX_POINTS EGAL {
                         idfNotDeclard($1);  
                         verifierConstate($1);                          
                         strcpy(sauvIdfIcompatible,$1);
                         typeInst = 1;
-                    } DEUX_POINTS EGAL EXPRESSION  POINT_VIRGULE {typeInst = 0 ;}
+                    } EXPRESSION  POINT_VIRGULE {typeInst = 0 ;}
 ;
 BOUCLE: WHILE CONDITION EXECUTE ACCOLADE_OUVRANTE INSTRUCTIONS ACCOLADE_FERMANTE POINT_VIRGULE
 ;
@@ -163,6 +163,8 @@ int main() {
     else 
         yyparse();
     afficherIdf();
+    afficherSeparateurs();
+    afficherKeywords();
     
     // afficherTs_MC_Sep(2);
     // afficherTs_MC_Sep(3);

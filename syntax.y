@@ -19,6 +19,8 @@ extern int nb_ligne;
 extern int col;
 int i = 0;
 char sauveType[10];
+char sauvIdfIcompatible[25];
+char sauvIdfIcompatible2[25];
 Element *element;
 // values val;
 // int tabPile[1000];
@@ -32,6 +34,7 @@ Element *element;
 // int TabOrIdf = 0;
 void yyerror(char* msg);
 int printError(char* Type ,char* entite);
+int printIncompatibleTypeError(char* type1,char* type2);
 %}
 %union {
     int ival;
@@ -122,6 +125,7 @@ AFFECTATION:        IDF DEUX_POINTS EGAL EXPRESSION  POINT_VIRGULE {
         printError("Symantec error variable non declarer",$1);
     if(verifierConstate($1)==1)
         printError("Symantec error une constante ne peut pas etre changer",$1);
+    strcpy(sauvIdfIcompatible,$1);
     
     
 }
@@ -147,14 +151,27 @@ EA:     EA PLUS EA
 |       EA DIV EA
 |       PARENTHESE_OUVRANTE EA PARENTHESE_FERMANTE
 |       IDF {
-            element = verifierexistetype($1);
-            if(element!=NULL){
+            Element *element1 = rechercherIdf($1);
+            if (element1 != NULL && (strcmp(element1->TypeEntite, "") == 0))
                 printError("Symantec error variable non declarer",$1);
-            }
+            Element *element2 = rechercherIdf(sauvIdfIcompatible);
+
+            if(element1 != NULL && element2 != NULL && strcmp(element1->TypeEntite,element2->TypeEntite)!=0)
+                printIncompatibleTypeError(element1->TypeEntite,element2->TypeEntite);
+            
         }
-|       NOMBRE
+|       NOMBRE {
+            Element *element = rechercherIdf(sauvIdfIcompatible);
+            if(element != NULL && sauvIdfIcompatible2 != NULL && strcmp(element->TypeEntite,sauvIdfIcompatible2)!=0)
+                printIncompatibleTypeError(element->TypeEntite,sauvIdfIcompatible2);
+}
 ;
-NOMBRE:CONST_INT|CONST_REAL
+NOMBRE:CONST_INT {
+    strcpy(sauvIdfIcompatible2,"INTEGER");
+}
+|   CONST_REAL{
+    strcpy(sauvIdfIcompatible2,"REAL");
+}
 ;
 PRO:   PROD PARENTHESE_OUVRANTE LISTE_EXP PARENTHESE_FERMANTE
 ;      
@@ -189,5 +206,10 @@ void yyerror (char* msg){
 int printError(char* Type ,char* entite){
     yyerror(Type);
     printf(" entite: %s \n",entite);
+    exit(-1);       
+}
+int printIncompatibleTypeError(char* type1,char* type2){
+    yyerror("Symantec error incompatibilte de type");
+    printf(" %s est incompatible avec %s \n",type1,type2);
     exit(-1);       
 }

@@ -58,3 +58,18 @@ int verifierConstate(char NomEntite[])
     else
         printf("Impossible d'ouvrir le fichier %s\n", logFileName);
 }
+
+
+char* compatibiliteType(char nomEntite1[],char nomEntite2[]){
+    Element *element1 = rechercherIdf(nomEntite1);
+    Element *element2 = rechercherIdf(nomEntite2);
+    char *err;
+    if(strcmp(element1->TypeEntite,element2->TypeEntite)!=0){
+        sprintf(err,"%s incompatible avec %s",element2->TypeEntite,element2->TypeEntite);
+        return err;
+    //   sprintf(err,"Erreur Sementique , Non Compatibilite de Type : %s n'a pas le meme type de %s  : line %d  column %d  \n",a,b,ligne,col);
+    //   insererErr(err,3);  
+    }
+
+    return NULL;
+}

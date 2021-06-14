@@ -5,21 +5,24 @@ CONST Const1 = 'A';
 CONST Const2 = "string";
 STRING String;
 $STRING String;$
+CHAR Char;
 START
-    Var1 := 15;
+    Var2 := PROD(3 + 5 * 2,5,25-Var1);
+    Var1 := (15 + 20) / 10;
+    $
+    
     Var1 := 20/0;
-    Var2 := PROD(20 + 10 * 20   ,   15*8*8,15+ 8/12*18);
+    
     Var2 := 20 + 10 * 20;
     Var1 :=  Var2 + 3 ;
-    $Const1 := 1;$
-    WHILE (9.0 + 0.2 + 5) LT "A" EXECUTE
-    {
-        Var1 := 1;
-    };
+    
+     Const1 := 1;
 
+    Char := 'a' ;
     WHEN 4 GT 5
         DO 
             Var1:= 1;
         OTHERWISE
             Var2 := 2;
+    $
 END.

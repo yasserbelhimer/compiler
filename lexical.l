@@ -197,6 +197,7 @@ NE {
     col = col + strlen(yytext);
     if(yyleng <= 6){
         //  inserer(yytext,"CONST_INT","Entier",nb_ligne,col-yyleng,atof(yytext),1);
+        yylval.ival=atoi(yytext);
         return CONST_INT;
     }
     else{
@@ -207,6 +208,7 @@ NE {
     col = col + strlen(yytext);
     if(yyleng <= 8){
         //  inserer(yytext,"CONST_REAL","Reel",nb_ligne,col-yyleng,atof(yytext),1);
+         yylval.fval=atof(yytext);
         return CONST_REAL;
     }
     else{
@@ -215,11 +217,13 @@ NE {
 }
 {CONST_CHAR} {
     //  inserer(yytext,"CONST_CHAR","",nb_ligne,col,0,1);
+    yylval.sval=strdup(yytext);
     col = col + strlen(yytext);
     return CONST_CHAR;
 }
 {CONST_STRING} {
     col = col + strlen(yytext);
+    yylval.sval=strdup(yytext);
     //  inserer(yytext,"CONST_STR","",nb_ligne,col-yyleng,0,1);
     return CONST_STRING;
 }

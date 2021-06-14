@@ -8,13 +8,16 @@ int typeInst = 0;
 char sauveType[10];
 char sauvIdfIcompatible[25];
 char sauvIdfIcompatible2[25];
+char tmp [20];
+int tmpQc=1;
+char tmpQcStr[20];
+int prod = 0;
 Element *element;
 
 %}
 %union {
     int ival;
     float fval;
-    char cval;
     char* sval;
 }
 %token EGAL DEUX_POINTS POINT_VIRGULE VIRGULE POINT 
@@ -23,8 +26,8 @@ Element *element;
 %token CODE START END <sval>INTEGER <sval>REAL <sval>CHAR <sval>STRING CONST WHILE EXECUTE WHEN DO OTHERWISE PROD
 %token <ival>CONST_INT
 %token <fval>CONST_REAL 
-%token <cval>CONST_STRING 
-%token <sval>CONST_CHAR IDF
+%token <sval>CONST_CHAR <sval>CONST_STRING IDF
+%type <sval>EA EXPRESSION
 %left PLUS MOINS
 %left MULT DIV
 %start axiom
@@ -110,7 +113,8 @@ AFFECTATION:        IDF DEUX_POINTS EGAL {
                         verifierConstate($1);                          
                         strcpy(sauvIdfIcompatible,$1);
                         typeInst = 1;
-                    } EXPRESSION  POINT_VIRGULE {typeInst = 0 ;}
+                        prod = 0;
+                    } EXPRESSION  POINT_VIRGULE {typeInst = 0 ; if(!prod) insererQuadr(":=",$5,"",$1);}
 ;
 BOUCLE: WHILE CONDITION EXECUTE ACCOLADE_OUVRANTE INSTRUCTIONS ACCOLADE_FERMANTE POINT_VIRGULE
 ;
@@ -122,37 +126,48 @@ OPERAND: EA | CONST_STRING | CONST_CHAR
 ;
 OPERATEUR_LOGIQUE: EQ | LT | GT | LE | GE | NE
 ;
-EXPRESSION: CONST_CHAR
-|           CONST_STRING
-|           EA
-|           PRO
+EXPRESSION: CONST_CHAR {$$=strdup($1);}
+|           CONST_STRING {$$=strdup($1);}
+|           EA  {tmpQc=1; $$=strdup($1);}
+|           PRO {$$=strdup(tmp);prod = 1;}
 ;
-EA:     EA PLUS EA 
-|       EA MOINS EA 
-|       EA MULT EA
-|       EA DIV EA
-|       PARENTHESE_OUVRANTE EA PARENTHESE_FERMANTE
+EA:     EA PLUS EA {sprintf(tmp,"t%d",tmpQc++); insererQuadr("+",$1,$3,tmp);$$=strdup(tmp);}
+|       EA MOINS EA {sprintf(tmp,"t%d",tmpQc++);insererQuadr("-",$1,$3,tmp);$$=strdup(tmp);}
+|       EA MULT EA {sprintf(tmp,"t%d",tmpQc++);insererQuadr("*",$1,$3,tmp);$$=strdup(tmp);}
+|       EA DIV EA {sprintf(tmp,"t%d",tmpQc++);insererQuadr("/",$1,$3,tmp);$$=strdup(tmp);}
+|       PARENTHESE_OUVRANTE EA PARENTHESE_FERMANTE {$$= strdup($2);}
 |       IDF {
             idfNotDeclard($1);
             if(typeInst==1)
                 compatibiliteType(sauvIdfIcompatible,$1,1);            
         }
-|       NOMBRE {
-            if(typeInst==1)
-                compatibiliteType(sauvIdfIcompatible,sauvIdfIcompatible2,2);
-}
+|       CONST_INT {
+            strcpy(sauvIdfIcompatible2,"INTEGER");
+            sprintf(tmp,"%d",$1);
+            $$=strdup(tmp);
+        }
+|       CONST_REAL{
+            strcpy(sauvIdfIcompatible2,"REAL");
+            sprintf(tmp,"%.2f",$1);
+            $$=strdup(tmp);
+        }
 ;
-NOMBRE:CONST_INT {
-    strcpy(sauvIdfIcompatible2,"INTEGER");
-}
-|   CONST_REAL{
-    strcpy(sauvIdfIcompatible2,"REAL");
-}
-;
-PRO:   PROD PARENTHESE_OUVRANTE LISTE_EXP PARENTHESE_FERMANTE
+PRO:   PROD {insererQuadr(":=","1","",sauvIdfIcompatible);} PARENTHESE_OUVRANTE LISTE_EXP PARENTHESE_FERMANTE
 ;      
-LISTE_EXP:  EA  VIRGULE  LISTE_EXP
-|           EA VIRGULE EA 
+LISTE_EXP:  EA { 
+                sprintf(tmpQcStr,"%d",qc+3); 
+                insererQuadr("BMZ",tmpQcStr,$1,"");
+                sprintf(tmp,"t%d",tmpQc++);
+                insererQuadr("*",sauvIdfIcompatible,$1,tmp);
+                insererQuadr(":=",tmp,"",sauvIdfIcompatible);
+            } VIRGULE  LISTE_EXP
+|           EA { 
+                sprintf(tmpQcStr,"%d",qc+3); 
+                insererQuadr("BMZ",tmpQcStr,$1,"");
+                sprintf(tmp,"t%d",tmpQc++);
+                insererQuadr("*",sauvIdfIcompatible,$1,tmp);
+                insererQuadr(":=",tmp,"",sauvIdfIcompatible);
+            }
 ;
 %%
 int main() {
@@ -165,6 +180,7 @@ int main() {
     afficherIdf();
     afficherSeparateurs();
     afficherKeywords();
+    AfficherQuadruples();
     
     // afficherTs_MC_Sep(2);
     // afficherTs_MC_Sep(3);

@@ -18,7 +18,6 @@ struct Separateur
 };
 Separateur *listSeparateurs = NULL;
 
-
 typedef struct Keyword Keyword;
 struct Keyword
 {
@@ -27,3 +26,13 @@ struct Keyword
     Keyword *svt;
 };
 Keyword *listMotsCles = NULL;
+
+typedef struct Quad
+{
+    char oper[100];
+    char ope1[100];
+    char ope2[100];
+    char res[100];
+} Quad;
+
+Quad quadruples[1000];

@@ -10,6 +10,7 @@ char sauvIdfIcompatible[25];
 char sauvIdfIcompatible2[25];
 char tmp [20];
 int tmpQc=1;
+int finQc=0;
 char tmpQcStr[20];
 int prod = 0;
 Element *element;
@@ -118,7 +119,16 @@ AFFECTATION:        IDF DEUX_POINTS EGAL {
 ;
 BOUCLE: WHILE CONDITION EXECUTE ACCOLADE_OUVRANTE INSTRUCTIONS ACCOLADE_FERMANTE POINT_VIRGULE
 ;
-CONTROLE: WHEN CONDITION DO AFFECTATION OTHERWISE AFFECTATION 
+CONTROLE: WHEN CONDITION DO {
+        finQc = qc;
+        insererQuadr("BZ","","t_cond","");
+    } AFFECTATION {
+        miseAjour(finQc);
+        finQc = qc;
+        insererQuadr("BR","","","");
+    } OTHERWISE AFFECTATION {
+        miseAjour(finQc);
+    }
 ;
 CONDITION: OPERAND OPERATEUR_LOGIQUE OPERAND
 ;

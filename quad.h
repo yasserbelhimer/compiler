@@ -1,3 +1,11 @@
+/**
+ * Inserer un quadruple dans la table des quads
+ * @param char opr[] l'operateur
+ * @param char op1[] l'operand 1
+ * @param char op2[] l'operand 2
+ * @param char res[] le resultat
+ * @return void
+*/
 void insererQuadr(char opr[],char op1[],char op2[],char res[])
 {
     strcpy(quadruples[qc].oper,opr);
@@ -7,8 +15,21 @@ void insererQuadr(char opr[],char op1[],char op2[],char res[])
     qc++;
 }
 
+/**
+ * Pour faire la mise a jour d'un quadruple dans la table des quads
+ * @param int tempQc l'indecx du quad que on var le faire la mise a jour
+ * @return void
+*/
+void miseAjour(int tempQc){
+    char cast[10];
+    sprintf(cast,"%d",qc);
+    strcpy(quadruples[tempQc].ope1,cast);
+}
 
-
+/**
+ * Afficher l'ensemble des quadruples dans le fichier quad.log
+ * @return void
+*/
 void AfficherQuadruples(){
     FILE *fichier = NULL;
     fichier = fopen("quad.log", "w");
@@ -31,3 +52,4 @@ void AfficherQuadruples(){
 
     fclose(fichier);
 }
+

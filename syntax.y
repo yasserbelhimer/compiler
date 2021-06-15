@@ -13,7 +13,7 @@ int tmpQc=1;
 char tmpQcStr[20];
 int prod = 0;
 Element *element;
-
+int itIsDiv = 0;
 %}
 %union {
     int ival;
@@ -134,7 +134,7 @@ EXPRESSION: CONST_CHAR {$$=strdup($1);}
 EA:     EA PLUS EA {sprintf(tmp,"t%d",tmpQc++); insererQuadr("+",$1,$3,tmp);$$=strdup(tmp);}
 |       EA MOINS EA {sprintf(tmp,"t%d",tmpQc++);insererQuadr("-",$1,$3,tmp);$$=strdup(tmp);}
 |       EA MULT EA {sprintf(tmp,"t%d",tmpQc++);insererQuadr("*",$1,$3,tmp);$$=strdup(tmp);}
-|       EA DIV EA {sprintf(tmp,"t%d",tmpQc++);insererQuadr("/",$1,$3,tmp);$$=strdup(tmp);}
+|       EA DIV {itIsDiv = 1;} EA {sprintf(tmp,"t%d",tmpQc++);insererQuadr("/",$1,$4,tmp);$$=strdup(tmp);itIsDiv = 0;}
 |       PARENTHESE_OUVRANTE EA PARENTHESE_FERMANTE {$$= strdup($2);}
 |       IDF {
             idfNotDeclard($1);
@@ -142,11 +142,15 @@ EA:     EA PLUS EA {sprintf(tmp,"t%d",tmpQc++); insererQuadr("+",$1,$3,tmp);$$=s
                 compatibiliteType(sauvIdfIcompatible,$1,1);            
         }
 |       CONST_INT {
+            if(itIsDiv && $1==0)
+                printError("Symantec error division par zero","0");
             strcpy(sauvIdfIcompatible2,"INTEGER");
             sprintf(tmp,"%d",$1);
             $$=strdup(tmp);
         }
 |       CONST_REAL{
+            if(itIsDiv && $1==0.0)
+                printError("Symantec error division par zero","0.0");
             strcpy(sauvIdfIcompatible2,"REAL");
             sprintf(tmp,"%.2f",$1);
             $$=strdup(tmp);

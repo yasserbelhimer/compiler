@@ -7,9 +7,9 @@ STRING String;
 $STRING String;$
 CHAR Char;
 START
-    Var2 := PROD(3 + 5 * 2,5,25-Var1);
-    Var1 := (15 + 20) / 10;
-    $
+
+Var1 := (15 + 20) / 0;
+    $Var2 := PROD(3 + 5 * 2,5,25-Var1);    
     
     Var1 := 20/0;
     

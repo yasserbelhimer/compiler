@@ -6,3 +6,4 @@ lex.yy.c
 lex.yy.o
 logs/
 *.log
+Docs/

@@ -9,12 +9,16 @@ char sauveType[10];
 char sauvIdfIcompatible[25];
 char sauvIdfIcompatible2[25];
 char tmp [20];
+char cond_tmp [20];
 int tmpQc=1;
 int finQc=0;
+int cond_temp = 1;
 char tmpQcStr[20];
 int prod = 0;
 Element *element;
 int itIsDiv = 0;
+int beginWhile;
+int beginWhileBZ;
 %}
 %union {
     int ival;
@@ -22,13 +26,13 @@ int itIsDiv = 0;
     char* sval;
 }
 %token EGAL DEUX_POINTS POINT_VIRGULE VIRGULE POINT 
-%token EQ LT GT LE GE NE 
+%token <sval>EQ <sval>LT <sval>GT <sval>LE <sval>GE <sval>NE 
 %token ACCOLADE_OUVRANTE ACCOLADE_FERMANTE PARENTHESE_OUVRANTE PARENTHESE_FERMANTE
 %token CODE START END <sval>INTEGER <sval>REAL <sval>CHAR <sval>STRING CONST WHILE EXECUTE WHEN DO OTHERWISE PROD
 %token <ival>CONST_INT
 %token <fval>CONST_REAL 
 %token <sval>CONST_CHAR <sval>CONST_STRING IDF
-%type <sval>EA EXPRESSION
+%type <sval>EA EXPRESSION OPERAND OPERATEUR_LOGIQUE
 %left PLUS MOINS
 %left MULT DIV
 %start axiom
@@ -117,11 +121,20 @@ AFFECTATION:        IDF DEUX_POINTS EGAL {
                         prod = 0;
                     } EXPRESSION  POINT_VIRGULE {typeInst = 0 ; if(!prod) insererQuadr(":=",$5,"",$1);}
 ;
-BOUCLE: WHILE CONDITION EXECUTE ACCOLADE_OUVRANTE INSTRUCTIONS ACCOLADE_FERMANTE POINT_VIRGULE
+BOUCLE: WHILE {
+        beginWhile = qc;
+    } CONDITION {
+        beginWhileBZ = qc;
+        insererQuadr("BZ","",cond_tmp,"");
+    } EXECUTE ACCOLADE_OUVRANTE INSTRUCTIONS {
+        sprintf(tmp,"%d",beginWhile);
+        insererQuadr("BR",tmp,"","");
+        miseAjour(beginWhileBZ);
+    } ACCOLADE_FERMANTE POINT_VIRGULE
 ;
 CONTROLE: WHEN CONDITION DO {
         finQc = qc;
-        insererQuadr("BZ","","t_cond","");
+        insererQuadr("BZ","",cond_tmp,"");
     } AFFECTATION {
         miseAjour(finQc);
         finQc = qc;
@@ -130,7 +143,7 @@ CONTROLE: WHEN CONDITION DO {
         miseAjour(finQc);
     }
 ;
-CONDITION: OPERAND OPERATEUR_LOGIQUE OPERAND
+CONDITION: OPERAND OPERATEUR_LOGIQUE OPERAND {sprintf(cond_tmp,"C_T%d",cond_temp++);insererQuadr($2,$1,$3,cond_tmp);}
 ;
 OPERAND: EA | CONST_STRING | CONST_CHAR
 ;

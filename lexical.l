@@ -145,31 +145,37 @@ PROD {
 }
 EQ {
     insererSeparateurLex(yytext);
+    yylval.sval=strdup(yytext);
     col = col + strlen(yytext);
     return EQ;
 }
 LT {
     insererSeparateurLex(yytext);
+    yylval.sval=strdup(yytext);
     col = col + strlen(yytext);
     return LT;
 }
 GT {
     insererSeparateurLex(yytext);
+    yylval.sval=strdup(yytext);
     col = col + strlen(yytext);
     return GT;
 }
 LE {
     insererSeparateurLex(yytext);
+    yylval.sval=strdup(yytext);
     col = col + strlen(yytext);
     return LE;
 }
 GE {
     insererSeparateurLex(yytext);
+    yylval.sval=strdup(yytext);
     col = col + strlen(yytext);
     return GE;
 }
 NE {
     insererSeparateurLex(yytext);
+    yylval.sval=strdup(yytext);
     col = col + strlen(yytext);
     return NE;
 }

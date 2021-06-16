@@ -7,13 +7,18 @@ STRING String;
 $STRING String;$
 CHAR Char;
 START
-    WHEN 4 GT 5
-    DO 
-        Var1:= (15 + 20) / 10;
-    OTHERWISE
-        Var2 := PROD(3 + 5 * 2,5,25-Var1);
-    Var1 := 100/9;
-    $
+    WHILE (5*3) LT 9 + 9 EXECUTE
+    {
+        WHEN 4 GT 5
+        DO 
+            Var1:= (15 + 20) / 10;
+        OTHERWISE
+            Var2 := PROD(3 + 5 * 2,5,25-Var1);
+        Var1 := 122 + 2 * 10 / 20;
+    };
+     
+    $ Var1 := 100/9;
+    
     Var1 := (15 + 20) / 10;
     Var2 := PROD(3 + 5 * 2,5,25-Var1);    
     

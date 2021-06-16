@@ -1,24 +1,6 @@
   
 %{
 #include "headers.h"
-
-
-int i = 0;
-int typeInst = 0;
-char sauveType[10];
-char sauvIdfIcompatible[25];
-char sauvIdfIcompatible2[25];
-char tmp [20];
-char cond_tmp [20];
-int tmpQc=1;
-int finQc=0;
-int cond_temp = 1;
-char tmpQcStr[20];
-int prod = 0;
-Element *element;
-int itIsDiv = 0;
-int beginWhile;
-int beginWhileBZ;
 %}
 %union {
     int ival;
@@ -63,21 +45,25 @@ TYPE: INTEGER {
 ;
 CONSTANTE:  CONST_INT {
                 strcpy(sauveType,"INTEGER");
+                sprintf(constValue,"%d",$1);
             }
 |           CONST_REAL {
                 strcpy(sauveType,"REAL");
+                sprintf(constValue,"%f",$1);
             }
 |           CONST_STRING {
                 strcpy(sauveType,"STRING");
+                sprintf(constValue,"%s",$1);
             }
 |           CONST_CHAR {
                 strcpy(sauveType,"CHAR");
+                sprintf(constValue,"%s",$1);
             }
 ;
 LISTE_IDF:  IDF VIRGULE LISTE_IDF {
         element = verifierexistetype($1);
         if(element!=NULL){
-            inserertype(element,sauveType,"VARIABLE");
+            inserertype(element,sauveType,"VARIABLE",NULL);
         }
         else{
             printError("Symantec error double declaration",$1);
@@ -86,7 +72,7 @@ LISTE_IDF:  IDF VIRGULE LISTE_IDF {
 |   IDF {
         element = verifierexistetype($1);
         if(element!=NULL){
-            inserertype(element,sauveType,"VARIABLE");
+            inserertype(element,sauveType,"VARIABLE",NULL);
         }
         else{
             printError("Symantec error double declaration",$1);
@@ -96,7 +82,7 @@ LISTE_IDF:  IDF VIRGULE LISTE_IDF {
 DECLARATION_CONSTANTE: IDF EGAL CONSTANTE {
         element = verifierexistetype($1);
         if(element!=NULL){
-            inserertype(element,sauveType,"CONSTANTE");
+            inserertype(element,sauveType,"CONSTANTE",constValue);
         }
         else{
             printError("Symantec error double declaration",$1);
@@ -116,7 +102,7 @@ LISTE_INSTRUCTION:  AFFECTATION
 AFFECTATION:        IDF DEUX_POINTS EGAL {
                         idfNotDeclard($1);  
                         verifierConstate($1);                          
-                        strcpy(sauvIdfIcompatible,$1);
+                        strcpy(sauvIdf,$1);
                         typeInst = 1;
                         prod = 0;
                     } EXPRESSION  POINT_VIRGULE {typeInst = 0 ; if(!prod) insererQuadr(":=",$5,"",$1);}
@@ -157,43 +143,52 @@ EXPRESSION: CONST_CHAR {$$=strdup($1);}
 EA:     EA PLUS EA {sprintf(tmp,"t%d",tmpQc++); insererQuadr("+",$1,$3,tmp);$$=strdup(tmp);}
 |       EA MOINS EA {sprintf(tmp,"t%d",tmpQc++);insererQuadr("-",$1,$3,tmp);$$=strdup(tmp);}
 |       EA MULT EA {sprintf(tmp,"t%d",tmpQc++);insererQuadr("*",$1,$3,tmp);$$=strdup(tmp);}
-|       EA DIV {itIsDiv = 1;} EA {sprintf(tmp,"t%d",tmpQc++);insererQuadr("/",$1,$4,tmp);$$=strdup(tmp);itIsDiv = 0;}
+|       EA DIV {
+            if(!itIsDiv)
+                debutDiv = qc;
+            itIsDiv++;
+        } EA {
+            sprintf(tmp,"t%d",tmpQc++);
+            insererQuadr("/",$1,$4,tmp);
+            $$=strdup(tmp);
+            itIsDiv--;
+            if(!itIsDiv){
+                if(!divPar0(debutDiv,qc-1))
+                printError("Symantec error division par zero","0");
+            }           
+        }
 |       PARENTHESE_OUVRANTE EA PARENTHESE_FERMANTE {$$= strdup($2);}
 |       IDF {
             idfNotDeclard($1);
             if(typeInst==1)
-                compatibiliteType(sauvIdfIcompatible,$1,1);            
+                compatibiliteType(sauvIdf,$1,1);            
         }
 |       CONST_INT {
-            if(itIsDiv && $1==0)
-                printError("Symantec error division par zero","0");
-            strcpy(sauvIdfIcompatible2,"INTEGER");
+            strcpy(sauvIdf2,"INTEGER");
             sprintf(tmp,"%d",$1);
             $$=strdup(tmp);
         }
 |       CONST_REAL{
-            if(itIsDiv && $1==0.0)
-                printError("Symantec error division par zero","0.0");
-            strcpy(sauvIdfIcompatible2,"REAL");
+            strcpy(sauvIdf2,"REAL");
             sprintf(tmp,"%.2f",$1);
             $$=strdup(tmp);
         }
 ;
-PRO:   PROD {insererQuadr(":=","1","",sauvIdfIcompatible);} PARENTHESE_OUVRANTE LISTE_EXP PARENTHESE_FERMANTE
+PRO:   PROD {insererQuadr(":=","1","",sauvIdf);} PARENTHESE_OUVRANTE LISTE_EXP PARENTHESE_FERMANTE
 ;      
 LISTE_EXP:  EA { 
                 sprintf(tmpQcStr,"%d",qc+3); 
                 insererQuadr("BMZ",tmpQcStr,$1,"");
                 sprintf(tmp,"t%d",tmpQc++);
-                insererQuadr("*",sauvIdfIcompatible,$1,tmp);
-                insererQuadr(":=",tmp,"",sauvIdfIcompatible);
+                insererQuadr("*",sauvIdf,$1,tmp);
+                insererQuadr(":=",tmp,"",sauvIdf);
             } VIRGULE  LISTE_EXP
 |           EA { 
                 sprintf(tmpQcStr,"%d",qc+3); 
                 insererQuadr("BMZ",tmpQcStr,$1,"");
                 sprintf(tmp,"t%d",tmpQc++);
-                insererQuadr("*",sauvIdfIcompatible,$1,tmp);
-                insererQuadr(":=",tmp,"",sauvIdfIcompatible);
+                insererQuadr("*",sauvIdf,$1,tmp);
+                insererQuadr(":=",tmp,"",sauvIdf);
             }
 ;
 %%
@@ -208,9 +203,6 @@ int main() {
     afficherSeparateurs();
     afficherKeywords();
     AfficherQuadruples();
-    
-    // afficherTs_MC_Sep(2);
-    // afficherTs_MC_Sep(3);
     fclose(yyin);
     return 0;
 }

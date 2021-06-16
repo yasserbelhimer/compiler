@@ -5,6 +5,7 @@ struct Element
     char codeEntite[20];
     char typeEntite[20];
     char typeDeclaration[20];
+    char value[20];
     Element *svt;
 };
 Element *listIdf = NULL;

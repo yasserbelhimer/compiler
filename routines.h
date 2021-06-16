@@ -13,18 +13,6 @@ Element *verifierexistetype(char nomEntite[])
     return element;
 }
 /**
- * Inserer un type d'une entite
- * @param Element *element l'element dans lequel on insert le type
- * @param char *type type de l'idf
- * @param char *typeDeclaration type de declaration de l'idf (Variable ou constante)
- * @return void
- */
-void inserertype(Element *element, char type[], char typeDeclaration[])
-{
-    strcpy(element->typeEntite, type);
-    strcpy(element->typeDeclaration, typeDeclaration);
-}
-/**
 * Verifier si un idf est une constante ou variable, Affiche une erreur semantique et sort de programme si l'entite est une constante
 * @param char nomEntite[] nom de l'entité
 */
@@ -68,4 +56,128 @@ void compatibiliteType(char nomEntite1[], char nomEntite2[], int type)
             printIncompatibleTypeError(element1->typeEntite, nomEntite2);
         }
     }
+}
+
+int divPar0(int debut, int fin)
+{
+    float denominateur;
+    float tempo1, tempo2;
+    float oper1, oper2;
+    int first = 0;
+    Element *element1 = NULL;
+    Element *element2 = NULL;
+    if (debut == fin)
+    {
+        element1 = rechercherIdf(quadruples[debut].ope2);
+        if (element1 != NULL && element1->typeDeclaration == "VARIABLE")
+            return 1;
+        if (element1 != NULL && (strcmp(element1->typeEntite, "INTEGER") == 0 || strcmp(element1->typeEntite, "REAL") == 0))
+            denominateur = atof(element1->value);
+        else
+            denominateur = atof(quadruples[debut].ope2);
+        if (denominateur == 0.0)
+            return 0;
+        else
+            return 1;
+    }
+    for (int i = debut; i < fin; i++)
+    {
+        if (quadruples[i].ope1[0] != 't' && quadruples[i].ope2[0] != 't')
+        {
+            first++;
+            element1 = rechercherIdf(quadruples[i].ope1);
+            element2 = rechercherIdf(quadruples[i].ope2);
+            if ((element1 != NULL && element1->typeDeclaration == "VARIABLE") || (element2 != NULL && element2->typeDeclaration == "VARIABLE"))
+                return 1;
+            if (element1 != NULL && (strcmp(element1->typeEntite, "INTEGER") == 0 || strcmp(element1->typeEntite, "REAL") == 0))
+                oper1 = atof(element1->value);
+            else
+                oper1 = atof(quadruples[i].ope1);
+            if (element2 != NULL && (strcmp(element2->typeEntite, "INTEGER") == 0 || strcmp(element2->typeEntite, "REAL") == 0))
+                oper2 = atof(element2->value);
+            else
+                oper2 = atof(quadruples[i].ope2);
+        }
+        else if (quadruples[i].ope1[0] == 't' && quadruples[i].ope2[0] != 't')
+        {
+            if (first % 2)
+                oper1 = tempo1;
+            else
+                oper1 = tempo2;
+            element2 = rechercherIdf(quadruples[i].ope2);
+            if (element2 != NULL && element2->typeDeclaration == "VARIABLE")
+                return 1;
+            if (element2 != NULL && (strcmp(element2->typeEntite, "INTEGER") == 0 || strcmp(element2->typeEntite, "REAL") == 0))
+                oper2 = atof(element2->value);
+            else
+                oper2 = atof(quadruples[i].ope2);
+        }
+        else if (quadruples[i].ope1[0] != 't' && quadruples[i].ope2[0] == 't')
+        {
+            element1 = rechercherIdf(quadruples[i].ope1);
+            if (element1 != NULL && element1->typeDeclaration == "VARIABLE")
+                return 1;
+            if (element1 != NULL && (strcmp(element1->typeEntite, "INTEGER") == 0 || strcmp(element1->typeEntite, "REAL") == 0))
+                oper1 = atof(element1->value);
+            else
+                oper1 = atof(quadruples[i].ope1);
+            if (first % 2)
+                oper2 = tempo1;
+            else
+                oper2 = tempo2;
+        }
+        else
+        {
+            first--;
+            oper1 = tempo1;
+            oper2 = tempo2;
+        }
+        if (strcmp(quadruples[i].oper, "+") == 0)
+        {
+            if (first % 2)
+            {
+                tempo1 = oper1 + oper2;
+            }
+            else
+                tempo2 = oper1 + oper2;
+        }
+        if (strcmp(quadruples[i].oper, "-") == 0)
+        {
+            if (first % 2)
+            {
+                tempo1 = oper1 - oper2;
+            }
+            else
+                tempo2 = oper1 - oper2;
+        }
+        if (strcmp(quadruples[i].oper, "*") == 0)
+        {
+            if (first % 2)
+            {
+                tempo1 = oper1 * oper2;
+            }
+            else
+                tempo2 = oper1 * oper2;
+        }
+        if (strcmp(quadruples[i].oper, "/") == 0)
+        {
+
+            if (oper2 == 0)
+                break;
+            if (first % 2)
+            {
+                tempo1 = oper1 / oper2;
+            }
+            else
+                tempo2 = oper1 / oper2;
+        }
+    }
+    if (first % 2)
+        denominateur = tempo1;
+    else
+        denominateur = tempo2;
+    if (denominateur == 0.0)
+        return 0;
+    else
+        return 1;
 }

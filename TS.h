@@ -42,6 +42,7 @@ void insererIdfLex(char nomEntite[], char codeEntite[])
         strcpy(p->nomEntite, nomEntite);
         strcpy(p->codeEntite, codeEntite);
         strcpy(p->typeEntite, "");
+        strcpy(p->value, "");
         strcpy(p->typeDeclaration, "UNDEFINED");
         p->svt = NULL;
         if (listIdf == NULL)
@@ -57,7 +58,20 @@ void insererIdfLex(char nomEntite[], char codeEntite[])
         }
     }
 }
-
+/**
+ * Inserer un type d'une entite
+ * @param Element *element l'element dans lequel on insert le type
+ * @param char *type type de l'idf
+ * @param char *typeDeclaration type de declaration de l'idf (Variable ou constante)
+ * @return void
+ */
+void inserertype(Element *element, char type[], char typeDeclaration[],char value[])
+{
+    strcpy(element->typeEntite, type);
+    strcpy(element->typeDeclaration, typeDeclaration);
+    if(value!=NULL)
+        strcpy(element->value, value);
+}
 /**
  * Afficher la table des symboles de idfs.
  * @return void
@@ -69,16 +83,16 @@ void afficherIdf()
     if (fichier != NULL)
     {
         fprintf(fichier, "\n/*********************************   Table des symboles des Idfs/Consts   ******************************/\n\n");
-        fprintf(fichier, "----------------------------------------------------------------------------------------------------------\n");
-        fprintf(fichier, "|           Nom Entite            |     Code Entite    |    Type Entite     |      Type Declaration       |\n");
+        fprintf(fichier, "-----------------------------------------------------------------------------------------------------------------------------\n");
+        fprintf(fichier, "|           Nom Entite            |     Code Entite    |    Type Entite     |      Type Declaration       |      Value      |\n");
         Element *p = listIdf;
         while (p != NULL)
         {
-            fprintf(fichier, "|---------------------------------|--------------------|--------------------|-----------------------------|\n");
-            fprintf(fichier, "| %25s       | %13s      | %13s      | %21s       |\n", p->nomEntite, p->codeEntite, p->typeEntite, p->typeDeclaration);
+            fprintf(fichier, "|---------------------------------|--------------------|--------------------|-----------------------------|-----------------|\n");
+            fprintf(fichier, "| %25s       | %13s      | %13s      | %21s       | %9s       |\n", p->nomEntite, p->codeEntite, p->typeEntite, p->typeDeclaration,p->value);
             p = p->svt;
         }
-        fprintf(fichier, "----------------------------------------------------------------------------------------------------------\n\n");
+        fprintf(fichier, "-----------------------------------------------------------------------------------------------------------------------------\n\n");
     }
     else
         printf("Impossible d'ouvrir le fichier ts.log\n");

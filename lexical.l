@@ -143,41 +143,41 @@ PROD {
     col = col + strlen(yytext);
     return DIV;
 }
-EQ {
-    insererSeparateurLex(yytext);
-    yylval.sval=strdup(yytext);
-    col = col + strlen(yytext);
-    return EQ;
-}
-LT {
-    insererSeparateurLex(yytext);
-    yylval.sval=strdup(yytext);
-    col = col + strlen(yytext);
-    return LT;
-}
 GT {
     insererSeparateurLex(yytext);
-    yylval.sval=strdup(yytext);
+    yylval.sval=strdup("BLE");
     col = col + strlen(yytext);
     return GT;
 }
-LE {
-    insererSeparateurLex(yytext);
-    yylval.sval=strdup(yytext);
-    col = col + strlen(yytext);
-    return LE;
-}
 GE {
     insererSeparateurLex(yytext);
-    yylval.sval=strdup(yytext);
+    yylval.sval=strdup("BL");
     col = col + strlen(yytext);
     return GE;
 }
+EQ {
+    insererSeparateurLex(yytext);
+    yylval.sval=strdup("BNE");
+    col = col + strlen(yytext);
+    return EQ;
+}
 NE {
     insererSeparateurLex(yytext);
-    yylval.sval=strdup(yytext);
+    yylval.sval=strdup("BE");
     col = col + strlen(yytext);
     return NE;
+}
+LE {
+    insererSeparateurLex(yytext);
+    yylval.sval=strdup("BG");
+    col = col + strlen(yytext);
+    return LE;
+}
+LT {
+    insererSeparateurLex(yytext);
+    yylval.sval=strdup("BGE");
+    col = col + strlen(yytext);
+    return LT;
 }
 "{" {
     insererSeparateurLex(yytext);

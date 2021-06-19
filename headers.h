@@ -32,5 +32,8 @@ Element *element;
 int itIsDiv = 0;
 int beginWhile;
 int beginWhileBZ;
-float denominateur;
 int debutDiv,finDiv;
+
+char operateurLogique[10];
+int debutCondition;
+int finCondition;

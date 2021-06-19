@@ -1,41 +1,18 @@
-CODE Algo
-INTEGER Var1,Var2;
-REAL Var4;
-CONST Const1 = 'A';
-CONST Const2 = "string";
-CONST Const3= 12;
-STRING String;
-$STRING String;$
-CHAR Char;
+CODE Tpcompil
+$ Partie déclaration $
+INTEGER X, Y, Z, W ;
+REAL A, B ;
+CHAR N ;
+STRING MAX ;
+CONST INTEGER Min = 5 ;
 START
-    Var2 := 10 + 20;
-    Var1 := 100/(Const3 - Var1);
-    WHILE (5*3) LT 9 + 9 EXECUTE
-    {
-        WHEN 4 GT 5
-        DO 
-            Var1:= (15 + 20) / 10;
-        OTHERWISE
-            Var2 := PROD(3 + 5 * 2,5,25-Var1);
-        Var1 := 122 + 2 * 10 / ( 20 + 0 );
-    };
-     
-    $
-    Var1 := (15 + 20) / 10;
-    Var2 := PROD(3 + 5 * 2,5,25-Var1);    
+    $ Partie instruction $
     
-    Var1 := 20/0;
-    
-    Var2 := 20 + 10 * 20;
-    Var1 :=  Var2 + 3 ;
-    
-     Const1 := 1;
-
-    Char := 'a' ;
-    WHEN 4 GT 5
-        DO 
-            Var1:= 1;
-        OTHERWISE
-            Var2 := 2;
-    $
+    WHEN X GT Y DO 
+        W := PROD (X+Y, Z*Y) ;
+    OTHERWISE 
+        WHILE A EQ B EXECUTE {
+            A := B+(3.5 ) ;
+            MAX := 'N' ;
+        } ;
 END.

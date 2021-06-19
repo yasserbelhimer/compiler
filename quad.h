@@ -35,7 +35,7 @@ void AfficherQuadruples(){
     fichier = fopen("quad.log", "w");
     if (fichier != NULL)
     {
-        fprintf(fichier, "\n/**   les quadruples  **/\n\n");
+        fprintf(fichier, "\n/************************  les quadruples  ************************/\n\n");
         fprintf(fichier, "-------------------------------------------------------------------\n");
         fprintf(fichier, "|  N  |  Operateur   |   Operand 1  |   Operand 2  |   Resultat   |\n");
         for (int i = 0; i < qc; i++)

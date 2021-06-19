@@ -27,8 +27,8 @@ DECLARATION:LISTE_DECLARATION
 ;
 LISTE_DECLARATION:  TYPE LISTE_IDF POINT_VIRGULE
 |                   TYPE LISTE_IDF POINT_VIRGULE LISTE_DECLARATION
-|                   CONST DECLARATION_CONSTANTE POINT_VIRGULE 
-|                   CONST DECLARATION_CONSTANTE POINT_VIRGULE LISTE_DECLARATION
+|                   CONST TYPE DECLARATION_CONSTANTE POINT_VIRGULE 
+|                   CONST TYPE DECLARATION_CONSTANTE POINT_VIRGULE LISTE_DECLARATION
 ;
 TYPE: INTEGER {
         strcpy(sauveType,$1);
@@ -99,6 +99,10 @@ LISTE_INSTRUCTION:  AFFECTATION
 |                   CONTROLE
 |                   CONTROLE LISTE_INSTRUCTION
 ;
+INSTRUCTION:    AFFECTATION
+|               BOUCLE
+|               CONTROLE
+;
 AFFECTATION:        IDF DEUX_POINTS EGAL {
                         idfNotDeclard($1);  
                         verifierConstate($1);                          
@@ -107,36 +111,40 @@ AFFECTATION:        IDF DEUX_POINTS EGAL {
                         prod = 0;
                     } EXPRESSION  POINT_VIRGULE {typeInst = 0 ; if(!prod) insererQuadr(":=",$5,"",$1);}
 ;
-BOUCLE: WHILE {
-        beginWhile = qc;
-    } CONDITION {
-        beginWhileBZ = qc;
-        insererQuadr("BZ","",cond_tmp,"");
-    } EXECUTE ACCOLADE_OUVRANTE INSTRUCTIONS {
-        sprintf(tmp,"%d",beginWhile);
+BOUCLE: WHILE CONDITION EXECUTE ACCOLADE_OUVRANTE INSTRUCTIONS {
+        sprintf(tmp,"%d",debutCondition);
         insererQuadr("BR",tmp,"","");
-        miseAjour(beginWhileBZ);
+        miseAjour(debutCondition);
     } ACCOLADE_FERMANTE POINT_VIRGULE
 ;
-CONTROLE: WHEN CONDITION DO {
-        finQc = qc;
-        insererQuadr("BZ","",cond_tmp,"");
-    } AFFECTATION {
-        miseAjour(finQc);
-        finQc = qc;
-        insererQuadr("BR","","","");
-    } OTHERWISE AFFECTATION {
-        miseAjour(finQc);
+CONTROLE: WHEN CONDITION DO  INSTRUCTION {
+        finCondition = qc;
+        insererQuadr("BR","fin","","");
+        miseAjour(debutCondition);
+    } OTHERWISE INSTRUCTION {
+        miseAjour(finCondition);
     }
 ;
-CONDITION: OPERAND OPERATEUR_LOGIQUE OPERAND {sprintf(cond_tmp,"C_T%d",cond_temp++);insererQuadr($2,$1,$3,cond_tmp);}
+CONDITION: OPERAND OPERATEUR_LOGIQUE OPERAND {
+        debutCondition = qc;
+        sprintf(cond_tmp,"",cond_temp++);
+        insererQuadr($2,cond_tmp,$1,$3);
+    }
 ;
 OPERAND: EA | CONST_STRING | CONST_CHAR
 ;
-OPERATEUR_LOGIQUE: EQ | LT | GT | LE | GE | NE
+OPERATEUR_LOGIQUE: EQ {sprintf(operateurLogique,"%s");} | LT | GT | LE | GE | NE
 ;
-EXPRESSION: CONST_CHAR {$$=strdup($1);}
-|           CONST_STRING {$$=strdup($1);}
+EXPRESSION: CONST_CHAR {
+                if(typeInst==1)
+                    compatibiliteType(sauvIdf,"CHAR",2);
+                $$=strdup($1);   
+            }
+|           CONST_STRING {
+                if(typeInst==1)
+                    compatibiliteType(sauvIdf,"STRING",2);
+                $$=strdup($1);
+            }
 |           EA  {tmpQc=1; $$=strdup($1);}
 |           PRO {$$=strdup(tmp);prod = 1;}
 ;
@@ -164,11 +172,15 @@ EA:     EA PLUS EA {sprintf(tmp,"t%d",tmpQc++); insererQuadr("+",$1,$3,tmp);$$=s
                 compatibiliteType(sauvIdf,$1,1);            
         }
 |       CONST_INT {
+            if(typeInst==1)
+                compatibiliteType(sauvIdf,"INTEGER",2);   
             strcpy(sauvIdf2,"INTEGER");
             sprintf(tmp,"%d",$1);
             $$=strdup(tmp);
         }
 |       CONST_REAL{
+            if(typeInst==1)
+                compatibiliteType(sauvIdf,"REAL",2); 
             strcpy(sauvIdf2,"REAL");
             sprintf(tmp,"%.2f",$1);
             $$=strdup(tmp);

@@ -3,6 +3,8 @@
         "structs.h": "c",
         "ts.h": "c",
         "*.y": "c",
-        "type_traits": "cpp"
+        "type_traits": "cpp",
+        "headers.h": "c",
+        "string.h": "c"
     }
 }

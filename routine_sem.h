@@ -48,6 +48,7 @@ list p=recherche(a,1);
 list q=recherche(b,1);
 list u=recherche(c,1);
 char err[200];
+
 if(div0==0 && cpt==1 && vr==2){
   p->info.Val=q->info.Val;
 }

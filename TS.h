@@ -30,11 +30,12 @@ list ts_sep=NULL;
 
 char logFileName[200];
 char logFileName2[200];
+char logFileName3[200];
 void initLogFile()
 {
 
     mkdir("logs");
-    strcpy(logFileName, "logs/TS+Quadr.log");
+    strcpy(logFileName, "logs/TS.log");
     FILE *fichier = NULL;
     fichier = fopen(logFileName, "w");    
     if (fichier == NULL)
@@ -47,6 +48,13 @@ void initLogFile()
     if (fichier2 == NULL)
     {
         printf("Impossible d'ouvrir le fichier %s\n", logFileName2);   
+    }
+    strcpy(logFileName3, "logs/Quadr.log");
+    FILE *fichier3 = NULL;
+    fichier3 = fopen(logFileName3, "w");    
+    if (fichier3 == NULL)
+    {
+        printf("Impossible d'ouvrir le fichier %s\n", logFileName3);   
     }
 
      

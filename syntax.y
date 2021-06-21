@@ -108,7 +108,7 @@ LISTE_INSTRUCTION:  AFFECTATION
 |                   CONTROLE
 |                   CONTROLE LISTE_INSTRUCTION
 ;
-AFFECTATION:        IDF {cpt2=1;type=1;strcpy(sauvIDF,curIDF);IdfNonDeclarer(curIDF,Lidf,Cidf);ModifierConst(curIDF,Lidf,Cidf);} DEUX_POINTS EGAL EXPRESSION  POINT_VIRGULE{type=2;}
+AFFECTATION:        IDF {cpt=0;div0=0;cpt2=1;type=1;strcpy(sauvIDF,curIDF);IdfNonDeclarer(curIDF,Lidf,Cidf);ModifierConst(curIDF,Lidf,Cidf);} DEUX_POINTS EGAL EXPRESSION  POINT_VIRGULE{type=2;}
 ;
 
 
@@ -120,14 +120,22 @@ BOUCLE: BOUCLE_B EXECUTE ACCOLADE_OUVRANTE INSTRUCTIONS ACCOLADE_FERMANTE  POINT
   Maj_Quad(depiler(&sauv_bz),1,tmp);
  }
 ;
-BOUCLE_B: BOUCLE_A CONDITION  {empiler(&sauv_bz,qc);InsererQuadr("BZ","","",resCond);}
+BOUCLE_B: BOUCLE_A CONDITION  
+ {
+  empiler(&sauv_bz,qc);
+  InsererQuadr("BZ","","",resCond);
+ }
 ;
 BOUCLE_A: WHILE {empiler(&sauv_deb,qc);cpt2=1;}
 ;
 
 
 
-CONTROLE: CONTROLE_B OTHERWISE BLOCK {itoa(qc,tmp,10);Maj_Quad(depiler(&sauv_br),1,tmp);}
+CONTROLE: CONTROLE_B OTHERWISE BLOCK 
+ {
+    itoa(qc,tmp,10);
+    Maj_Quad(depiler(&sauv_br),1,tmp);
+ }
 ;
 CONTROLE_B: CONTROLE_A DO BLOCK 
  { 

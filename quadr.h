@@ -139,43 +139,22 @@ int isOptArt(char a[]){
           return 1;
     return 0;       
 }
-int isOptLog(char a[]){
-    if(!strcmp(a,"GT") || !strcmp(a,"GE") || !strcmp(a,"EQ") || !strcmp(a,"NE")|| !strcmp(a,"LE") || !strcmp(a,"LT"))
-          return 1;
-    return 0;       
-}
-void devideOpOpr(Tab a,Tab *b,Tab *c,int deb,int fin,int cas){
+
+void devideOpOpr(Tab a,Tab *b,Tab *c,int deb,int fin){
     int i;
     initTab(b);
     initTab(c);
-    switch (cas)
-    {
-        case 1:{
-            if(deb>=0 && fin<a.nblemt){
-                for(i=deb;i<=fin;i++){
-                    if(isOptArt(a.t[i]))
-                        InsererChar(c,a.t[i],' ',2);
-                    else
-                        InsererChar(b,a.t[i],' ',2);
-                }
-            }
-            break;
-        }
-        case 2:{
-            if(deb>=0 && fin<a.nblemt){
-                for(i=deb;i<=fin;i++){
-                    if(isOptLog(a.t[i]))
-                        InsererChar(c,a.t[i],' ',2);
-                    else
-                        InsererChar(b,a.t[i],' ',2);
-                }
-            }
-            break;
-        }
+ 
 
+    if(deb>=0 && fin<a.nblemt){
+        for(i=deb;i<=fin;i++){
+            if(isOptArt(a.t[i]))
+                InsererChar(c,a.t[i],' ',2);
+            else
+                InsererChar(b,a.t[i],' ',2);
+        }
     }
-
-
+ 
 }
 void evaluationExp(Tab *opr,Tab *opt,int *cpt){
     int i;
@@ -235,13 +214,13 @@ Tab b,c;
 while(searchChar(*a,'(','L',0)!=-1){
  i=searchChar(*a,'(','L',0);i++;
  j=searchChar(*a,')','F',i);
- devideOpOpr(*a,&b,&c,i,j-1,1);
+ devideOpOpr(*a,&b,&c,i,j-1);
  deleteTab(a,i,j);
  evaluationExp(&b,&c,cpt);
  strcpy(a->t[i-1],b.t[0]);
 }
 
-devideOpOpr(*a,&b,&c,0,a->nblemt-1,1);
+devideOpOpr(*a,&b,&c,0,a->nblemt-1);
 deleteTab(a,1,a->nblemt-1);
 evaluationExp(&b,&c,cpt);
 strcpy(a->t[0],b.t[0]);
@@ -262,7 +241,7 @@ void quadrProd(char idf[],char resexp[]){
 void afficher_qdr()
 {
     FILE *fichier = NULL;
-    fichier = fopen(logFileName, "a");
+    fichier = fopen(logFileName3, "a");
 
     printf("\n\n\n      ***********   Les Quadruplets   ***********\n\n");
     fprintf(fichier,"\n\n\n      ***********   Les Quadruplets   ***********\n\n");

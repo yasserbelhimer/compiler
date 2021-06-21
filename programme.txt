@@ -6,7 +6,7 @@
 
 
 CODE Algo
-INTEGER  Var1  ,   Var2   ,   Var3;
+INTEGER  Var1  ,   Var2   ,   Cpt;
 REAL X1,X2,X3;
 
 CONST CHAR Const1 = 'A' ;
@@ -38,57 +38,54 @@ START
      
     X1:=1999.222;
     Var1:=         X1  +   X2   +   X3;
-    
+    Cpt:=0;
+    Var1:=2026/(Cpt);
     Var3 := PROD(20 + 10 * 20,5 - 8 + 3 - 8 + 6,15*45 - 59);
     
     Var2 := 20 + 10 * 20;
     
     Const1 := 20.0 - Var1;
     
-    Var1 := (20 + (10.55 * 20  * (Const1*8.55)+ 15 * (8/12*18)));
+    Var1 := (X1 + (10.55 * 20  * (Const1*8.55)+ 15 * (8/12*18)));
     
     Var3:=-55;
     
     X1:=20.0 + 50.202 + X3 + 20 + 199.22;
     
     $ Test WHILE $
-     
-    WHILE (5*3 + 5/5) LT "mlmlm" EXECUTE
+     $
+    WHILE (5*3 + 5/5) LT  Var1 EXECUTE
     {
-        Var12 := 122;
         Var2 := 22/(((Var1)));
-        Var2 := 20/(0);
-        WHILE (888*98/0) LT 'a' EXECUTE
+        Var2 := 20/(55);
+        WHILE "abn" EQ "a" EXECUTE
         {
-            Var2 := 20/(0);
-            WHILE (100 - 20) LT 'a' EXECUTE
+            Var2 := 2022;
+            WHILE 'e' NE 'a' EXECUTE
             {
-                Var2 := 20/(0);
+                Var2 := 2021 + Var2;
             };
         };
         Var2 := 1999;
     };
     
-  
+  $
   
   
     $ Test WHEn $
     
-    
-    WHEN "555" EQ (5 + 3)
+   $ 
+    WHEN Var1/8*5 EQ (5 + 3)
     DO 
         Var1:= 1999;
     OTHERWISE
-        WHEN "sss" GT 's'
+        WHEN "sss" GT "ss"
         DO 
-            Var1:= PROD(555,12121 + 5 - 5454 *99/8,5);
+            Var1:= Var1 + Var2;
         OTHERWISE
-             WHILE (100) LT 500 EXECUTE
-            {
-                Var2 := 20*80 - 60;
-            };
+            Var1:=0;   
     
     X1:=1;          
-    
+$    
 END.
 

@@ -2,6 +2,11 @@
  #include<stdlib.h>
  #include <string.h> 
 
+  //   TOUABTI Mohamed MASTER1 IV  groupe2  171732028255
+
+  //   SEGUENI Seif Eddine MASTER1 IV  groupe2  171732028289  
+
+
 typedef struct
 {
   int nblemt;  

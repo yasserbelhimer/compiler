@@ -1,0 +1,94 @@
+1).Boucle
+
+    while <cond> execute { <insts> ; };
+
+    while (R1)<cond> (R2) execute { <insts> ; };(R3)
+
+    
+
+    deb:{quadr of condition return cond.temp}
+    ("BZ",fin,,cond.temp)
+    {quadr of insts;}
+    ("BR",deb,,)
+    fin:
+
+    R1:{
+        sauv_deb=qc;
+    } 
+    R2:{
+        sauv_bz=qc;
+        InsererQuadr("BZ",/*FIN*/,,cond.temp);
+    } 
+    R3:{
+       InsererQuadr("BR",sauv_deb,,cond.temp);
+       MajQuadr(sauv_bz,2,qc);
+    } 
+
+2).WHEN
+
+    WHEN <cond> DO <inst1> OTHERWISE <inst2>
+   
+    WHEN <cond> (R1) DO <inst1> (R2) OTHERWISE <inst2> (R3)
+    
+    deb:{quadr of condition return cond.temp}
+    ("BZ",inst2,,cond.temp)
+    {quadr of insts1;}
+    ("BR",fin,,)
+    inst2:{quadr of insts1;}
+    fin:
+
+    R1:{
+        sauv_bz=qc;
+        InsererQuadr("BZ",/*inst2*/,,cond.temp);
+    } 
+    R2:{
+
+        sauv_br=qc;
+        InsererQuadr("BR",/*FIN*/,,);
+        MajQuadr(sauv_bz,2,qc);
+    } 
+    R3:{
+       MajQuadr(sauv_br,2,qc);
+    } 
+
+
+3).PROD
+
+Prod(<exp1>,<exp2>,.....,<expn>)
+(R1)Prod(<exp1>(R2),<exp2>(R3),.....,<expn>(Rn+1))
+
+
+(":=",1,,idf)
+{quadruples du <exp1> return temp1}
+("BMZ",/*exp2/*,,temp1)
+("*",temp1,1,idf)
+
+exp2:{quadruples du <exp2> return temp2}
+("BMZ",/*exp3/*,,temp2)
+("*",temp2,idf,idf)
+
+exp3:{quadruples du <exp3> return temp3}
+("BMZ",/*exp4/*,,temp3)
+("*",temp3,idf,idf)
+.....
+.....
+.....
+expn{quadruples du <expn> return tempn}
+("BMZ",/*fin/*,,tempn)
+("*",tempn,idf,idf)
+fin:
+
+R1:{
+    InsererQuadr(":=",1,"idf");
+}
+R2....Rn+1:{
+    InsererQuadr("BMZ",qc+2,,temp)
+    InsererQuadr("*",temp,1,idf)
+}
+
+
+
+
+
+
+

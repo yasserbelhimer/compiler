@@ -1,5 +1,9 @@
   
 %{
+    //   TOUABTI Mohamed MASTER1 IV  groupe2  171732028255
+
+    //   SEGUENI Seif Eddine MASTER1 IV  groupe2  171732028289  
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

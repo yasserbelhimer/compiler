@@ -1,6 +1,12 @@
 
  #include <stdio.h>
  #include <string.h> 
+
+  //   TOUABTI Mohamed MASTER1 IV  groupe2  171732028255
+
+  //   SEGUENI Seif Eddine MASTER1 IV  groupe2  171732028289  
+
+
 void IdfNonDeclarer(char a[],int ligne,int col){
     list p=recherche(a,1);
     char err[200];
@@ -19,6 +25,7 @@ void DoubleDeclaration(char a[],int ligne,int col){
 }
 
 void CompatibiliteType(char a[],char b[],int ligne,int col){
+
     list p=recherche(a,1);
     list q=recherche(b,1);
     char err[200];
